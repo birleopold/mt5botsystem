@@ -1,0 +1,12 @@
+// Missing input parameters to restore
+input bool EnableMarketRegimeFiltering = true; // Filter trades based on market regime
+input bool EnableNewsFilter = true;      // Enable filtering based on economic news
+input int NewsCooldownPeriod = 30;         // Waiting period after high-impact news before resuming trading
+input bool BlockHighImpactNews = true;   // Safety mechanism that prevents the EA from trading during major economic announcements
+input bool ReduceSizeOnMediumNews = true; // Reduce position size on medium news
+input double MediumNewsSizeReduction = 0.5; // Size reduction factor for medium impact news
+input double MinATRThreshold = 0.0003;   // Minimum volatility threshold required for trading signals
+input bool EnableDynamicATR = true;      // Enable dynamic ATR
+input double ATRDynamicMultiplier = 0.5; // ATR dynamic multiplier
+input double MinATRFloor = 0.00015;      // Minimum ATR floor
+input double MaxAllowedSpread = 3;       // Maximum spread allowed in pips for trade execution

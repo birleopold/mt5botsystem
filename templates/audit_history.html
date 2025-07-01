@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Your Audit History</h2>
+<table border="1" cellpadding="5" style="border-collapse:collapse;width:100%;">
+  <tr style="background:#f5f5f5;"><th>Time</th><th>Action</th><th>Object</th><th>Details</th></tr>
+  {% for log in logs %}
+    <tr>
+      <td>{{ log.timestamp|date:"Y-m-d H:i" }}</td>
+      <td>{{ log.get_action_display }}</td>
+      <td>{{ log.object_type }} #{{ log.object_id }}</td>
+      <td>
+        {% if log.extra_data %}
+          <pre style="font-size:0.98em;background:#f9f9f9;border-radius:4px;padding:0.4em 1em;">{{ log.extra_data|safe }}</pre>
+        {% else %}-{% endif %}
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4" style="color:#888;">No audit records found.</td></tr>
+  {% endfor %}
+</table>
+<a href="{% url 'download_audit_log' %}" style="margin-top:1.5em;display:inline-block;background:#1976d2;color:#fff;padding:0.5em 1.2em;border-radius:5px;text-decoration:none;">Download CSV</a>
+{% endblock %}

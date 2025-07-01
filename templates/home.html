@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!-- Home page specific styles -->
+<style>
+  .highlight-text {
+    color: #ffe082;
+    font-weight: 700;
+  }
+</style>
+
+<!-- Hero Section -->
+<div class="home-hero">
+  <span class="trust-badge">Trusted by 10,000+ traders</span>
+  <h1>Unlock Powerful <span class="highlight-text">MQL5 Bots</span> for MetaTrader 5</h1>
+  <p>Download, manage, and analyze trading bots. <br>Supercharge your trading with robust automation and insights.</p>
+  <a href="{% url 'bots_portal' %}" class="home-cta-btn">Browse Bots</a>
+</div>
+
+<!-- Features Section -->
+<div class="features-section">
+  <div class="container" style="max-width:1200px;margin:auto;">
+    <h2 class="section-heading centered">Trading Solutions</h2>
+    <div class="section-divider centered"></div>
+    
+    <div class="features-list">
+      <div class="feature-card">
+        <div class="icon">🤖</div>
+        <h3>Bot Library</h3>
+        <p>Explore and download top-performing <b>.ex5</b> trading bots, with versioning and changelogs.</p>
+        <a href="{% url 'bots_portal' %}" class="dashboard-btn primary">Go to Library</a>
+      </div>
+      
+      <div class="feature-card">
+        <div class="icon">📄</div>
+        <h3>Documentation</h3>
+        <p>Step-by-step guides for bot installation, usage, and optimization.</p>
+        <a href="/docs/" class="dashboard-btn">Read Docs</a>
+      </div>
+      
+      <div class="feature-card">
+        <div class="icon">📊</div>
+        <h3>Analytics</h3>
+        <p>Track downloads, see what's trending, and analyze bot performance.</p>
+        <a href="{% url 'admin_bot_analytics' %}" class="dashboard-btn">View Analytics</a>
+      </div>
+      
+      <div class="feature-card">
+        <div class="icon">🧑‍💼</div>
+        <h3>User Dashboard</h3>
+        <p>Manage your subscriptions, licenses, and account details in one place.</p>
+        <a href="/dashboard/" class="dashboard-btn">Go to Dashboard</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Testimonials Section -->
+<div class="features-section">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <h2 class="section-heading centered">What Our Users Say</h2>
+    <div class="section-divider centered"></div>
+    
+    <div class="testimonials-list">
+      <div class="testimonial">
+        <div class="icon">"</div>
+        <div class="text">The bots here have revolutionized my trading. Easy to use and very effective!</div>
+        <div class="author">— Sofia M., Trader</div>
+      </div>
+      
+      <div class="testimonial">
+        <div class="icon">"</div>
+        <div class="text">Best SaaS for MetaTrader bots. The analytics and support are top notch.</div>
+        <div class="author">— Alex T., Quant Developer</div>
+      </div>
+      
+      <div class="testimonial">
+        <div class="icon">"</div>
+        <div class="text">I love the documentation and the easy onboarding process. Highly recommended!</div>
+        <div class="author">— Priya S., Algo Enthusiast</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="how-section">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <h2 class="section-heading centered">How It Works</h2>
+    <div class="section-divider centered"></div>
+    
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="icon">📝</div>
+        <div>1. Sign Up & Log In</div>
+      </div>
+      
+      <div class="how-step">
+        <div class="icon">🤖</div>
+        <div>2. Browse & Select Bots</div>
+      </div>
+      
+      <div class="how-step">
+        <div class="icon">⬇️</div>
+        <div>3. Download & Install</div>
+      </div>
+      
+      <div class="how-step">
+        <div class="icon">📊</div>
+        <div>4. Track & Optimize</div>
+      </div>
+    </div>
+    
+    <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'register' %}{% endif %}" class="home-cta-btn">Get Started Free</a>
+  </div>
+</div>
+
+<!-- Marketing Tools: Google Analytics Example -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+{% endblock %}

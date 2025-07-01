@@ -1,0 +1,21 @@
+{% extends 'forum_base.html' %}
+{% block forum_content %}
+<h2>{{ topic.title }}</h2>
+<p>Category: <a href="/forum/category/{{ topic.category.id }}/">{{ topic.category.name }}</a> | Started by {{ topic.user.username }} on {{ topic.created_at|date:'Y-m-d H:i' }}</p>
+<hr>
+<div style="margin-bottom:2em;">
+  {% for post in posts %}
+    <div style="padding:1em;border-bottom:1px solid #eee;">
+      <b>{{ post.user.username }}</b> <span style="color:#888;">({{ post.created_at|date:'Y-m-d H:i' }})</span><br>
+      {{ post.message|linebreaksbr }}
+    </div>
+  {% empty %}
+    <div>No posts yet.</div>
+  {% endfor %}
+</div>
+<form method="post" style="max-width:600px;margin:auto;">
+  {% csrf_token %}
+  <textarea name="message" rows="4" required style="width:100%;padding:0.5em;margin-bottom:1em;"></textarea>
+  <button type="submit" style="background:#1976d2;color:#fff;padding:0.7em 2em;border:none;border-radius:6px;cursor:pointer;">Post Reply</button>
+</form>
+{% endblock %}

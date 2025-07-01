@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load learning_filters %}
+
+{% block extra_css %}
+<style>
+  .resource-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+  }
+  
+  .resource-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .progress-ring {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .resource-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 0 0.25rem 0 0.5rem;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .category-header {
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+    padding: 3rem 0;
+    color: white;
+    margin-bottom: 3rem;
+  }
+  
+  .resource-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+  }
+  
+  .filter-btn.active {
+    background-color: #0d6efd;
+    color: white;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="category-header">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-3">
+            <li class="breadcrumb-item"><a href="{% url 'learning_center' %}" class="text-white">Learning Center</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">{{ category.name }}</li>
+          </ol>
+        </nav>
+        <h1 class="display-5 fw-bold mb-3">{{ category.name }}</h1>
+        <p class="lead mb-0">{{ category.description }}</p>
+      </div>
+      <div class="col-md-4 text-center d-none d-md-block">
+        <div class="rounded-circle bg-white d-inline-flex align-items-center justify-content-center mb-3" style="width:120px;height:120px;">
+          <i class="fas {{ category.icon }} fa-4x text-primary"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- Search and Filters -->
+  <div class="row mb-4">
+    <div class="col-md-6 mb-3 mb-md-0">
+      <form method="get" class="d-flex">
+        <input type="text" name="q" class="form-control" placeholder="Search resources..." value="{{ query }}">
+        <button type="submit" class="btn btn-primary ms-2">
+          <i class="fas fa-search"></i>
+        </button>
+      </form>
+    </div>
+    <div class="col-md-6">
+      <div class="d-flex justify-content-md-end">
+        <div class="btn-group">
+          <a href="?{% if query %}q={{ query }}&{% endif %}{% if access_level %}access={{ access_level }}&{% endif %}" class="btn btn-outline-primary {% if not resource_type %}active{% endif %}">
+            All
+          </a>
+          <a href="?{% if query %}q={{ query }}&{% endif %}type=article{% if access_level %}&access={{ access_level }}{% endif %}" class="btn btn-outline-primary {% if resource_type == 'article' %}active{% endif %}">
+            <i class="fas fa-file-alt me-1"></i>Articles
+          </a>
+          <a href="?{% if query %}q={{ query }}&{% endif %}type=video{% if access_level %}&access={{ access_level }}{% endif %}" class="btn btn-outline-primary {% if resource_type == 'video' %}active{% endif %}">
+            <i class="fas fa-video me-1"></i>Videos
+          </a>
+          <a href="?{% if query %}q={{ query }}&{% endif %}type=pdf{% if access_level %}&access={{ access_level }}{% endif %}" class="btn btn-outline-primary {% if resource_type == 'pdf' %}active{% endif %}">
+            <i class="fas fa-file-pdf me-1"></i>PDFs
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Access Level Filter -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="btn-group">
+        <a href="?{% if query %}q={{ query }}&{% endif %}{% if resource_type %}type={{ resource_type }}{% endif %}" class="btn btn-sm btn-outline-secondary {% if not access_level %}active{% endif %}">
+          All Access Levels
+        </a>
+        <a href="?{% if query %}q={{ query }}&{% endif %}access=free{% if resource_type %}&type={{ resource_type }}{% endif %}" class="btn btn-sm btn-outline-secondary {% if access_level == 'free' %}active{% endif %}">
+          <i class="fas fa-unlock me-1"></i>Free
+        </a>
+        <a href="?{% if query %}q={{ query }}&{% endif %}access=basic{% if resource_type %}&type={{ resource_type }}{% endif %}" class="btn btn-sm btn-outline-secondary {% if access_level == 'basic' %}active{% endif %}">
+          <i class="fas fa-star me-1"></i>Basic
+        </a>
+        <a href="?{% if query %}q={{ query }}&{% endif %}access=premium{% if resource_type %}&type={{ resource_type }}{% endif %}" class="btn btn-sm btn-outline-secondary {% if access_level == 'premium' %}active{% endif %}">
+          <i class="fas fa-crown me-1"></i>Premium
+        </a>
+        <a href="?{% if query %}q={{ query }}&{% endif %}access=pro{% if resource_type %}&type={{ resource_type }}{% endif %}" class="btn btn-sm btn-outline-secondary {% if access_level == 'pro' %}active{% endif %}">
+          <i class="fas fa-gem me-1"></i>Pro
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Resources Grid -->
+  <div class="row">
+    {% if resources %}
+      {% for resource in resources %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card resource-card shadow-sm h-100 position-relative">
+            {% if resource.access_level != 'free' %}
+              <div class="resource-badge bg-warning text-dark">
+                <i class="fas 
+                  {% if resource.access_level == 'basic' %}fa-star
+                  {% elif resource.access_level == 'premium' %}fa-crown
+                  {% elif resource.access_level == 'pro' %}fa-gem
+                  {% endif %} me-1"></i>
+                {{ resource.get_access_level_display }}
+              </div>
+            {% endif %}
+            
+            {% if resource.id in user_progress %}
+              <div class="progress-ring">
+                <div class="progress" style="height: 4px;">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: {{ user_progress|get_item:resource.id }}%" aria-valuenow="{{ user_progress|get_item:resource.id }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+            {% endif %}
+            
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="resource-icon 
+                  {% if resource.resource_type == 'article' %}bg-primary bg-opacity-10 text-primary
+                  {% elif resource.resource_type == 'video' %}bg-danger bg-opacity-10 text-danger
+                  {% elif resource.resource_type == 'pdf' %}bg-success bg-opacity-10 text-success
+                  {% elif resource.resource_type == 'course' %}bg-warning bg-opacity-10 text-warning
+                  {% elif resource.resource_type == 'webinar' %}bg-info bg-opacity-10 text-info
+                  {% else %}bg-secondary bg-opacity-10 text-secondary{% endif %}">
+                  <i class="fas 
+                    {% if resource.resource_type == 'article' %}fa-file-alt
+                    {% elif resource.resource_type == 'video' %}fa-video
+                    {% elif resource.resource_type == 'pdf' %}fa-file-pdf
+                    {% elif resource.resource_type == 'course' %}fa-graduation-cap
+                    {% elif resource.resource_type == 'webinar' %}fa-laptop
+                    {% else %}fa-file{% endif %} fa-lg"></i>
+                </div>
+                <div class="ms-3">
+                  <span class="badge bg-secondary">{{ resource.get_resource_type_display }}</span>
+                  <span class="ms-2 text-muted"><i class="far fa-clock me-1"></i>{{ resource.estimated_duration }} min</span>
+                </div>
+              </div>
+              
+              <h5 class="card-title">{{ resource.title }}</h5>
+              <p class="card-text text-muted">{{ resource.description|truncatechars:100 }}</p>
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+              <a href="{{ resource.get_absolute_url }}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-arrow-right me-1"></i>View Resource
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>No resources found matching your criteria. Try adjusting your filters or search terms.
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- Pagination -->
+  {% if resources.has_other_pages %}
+    <div class="row mt-4">
+      <div class="col-12">
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center">
+            {% if resources.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ resources.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if resource_type %}&type={{ resource_type }}{% endif %}{% if access_level %}&access={{ access_level }}{% endif %}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+            {% endif %}
+            
+            {% for i in resources.paginator.page_range %}
+              {% if resources.number == i %}
+                <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+              {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}{% if resource_type %}&type={{ resource_type }}{% endif %}{% if access_level %}&access={{ access_level }}{% endif %}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+            
+            {% if resources.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ resources.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if resource_type %}&type={{ resource_type }}{% endif %}{% if access_level %}&access={{ access_level }}{% endif %}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  {% endif %}
+  
+  <!-- Subscription Upsell -->
+  {% if not user.is_authenticated or not user_subscription %}
+    <div class="row mt-5">
+      <div class="col-12">
+        <div class="card shadow-sm border-0 bg-primary text-white">
+          <div class="card-body p-4">
+            <div class="row align-items-center">
+              <div class="col-lg-8">
+                <h3 class="mb-3">Unlock Premium Learning Resources</h3>
+                <p class="lead mb-4">Upgrade your subscription to access our premium learning materials, including advanced strategies, expert webinars, and downloadable trading templates.</p>
+                <a href="{% url 'plan_list' %}" class="btn btn-light btn-lg">
+                  <i class="fas fa-crown me-2"></i>View Subscription Plans
+                </a>
+              </div>
+              <div class="col-lg-4 text-center d-none d-lg-block">
+                <img src="{% static 'img/premium_content.svg' %}" alt="Premium Content" class="img-fluid" style="max-height: 200px;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

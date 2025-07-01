@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container" style="max-width:900px;margin:3rem auto;">
+  <div class="section-divider centered"></div>
+  <div class="text-center">
+    <span class="trust-badge">Secure Payment Processing</span>
+    <h2 class="section-heading centered">Payment Status</h2>
+  </div>
+  
+  <div class="feature-card" style="margin:2rem auto;max-width:600px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+      <h3 style="margin:0;">Transaction Details</h3>
+      {% if payment.status == 'pending' %}
+        <span class="status-badge pending">{{ payment.get_status_display }}</span>
+      {% elif payment.status == 'confirmed' %}
+        <span class="status-badge active">{{ payment.get_status_display }}</span>
+      {% elif payment.status == 'failed' %}
+        <span class="status-badge inactive">{{ payment.get_status_display }}</span>
+      {% endif %}
+    </div>
+    
+    <div class="section-divider centered" style="width:100%;margin:1rem 0 1.5rem;"></div>
+    
+    <div class="dashboard-table" style="box-shadow:none;">
+      <table style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="padding:0.8rem 0;border-bottom:1px solid var(--border-color);width:40%;"><strong>Plan</strong></td>
+          <td style="padding:0.8rem 0;border-bottom:1px solid var(--border-color);">{{ payment.plan.name }}</td>
+        </tr>
+        <tr>
+          <td style="padding:0.8rem 0;border-bottom:1px solid var(--border-color);"><strong>Amount</strong></td>
+          <td style="padding:0.8rem 0;border-bottom:1px solid var(--border-color);"><span style="font-weight:600;color:var(--primary-color);">$</span>{{ payment.amount }}</td>
+        </tr>
+        <tr>
+          <td style="padding:0.8rem 0;border-bottom:1px solid var(--border-color);"><strong>Method</strong></td>
+          <td style="padding:0.8rem 0;border-bottom:1px solid var(--border-color);">{{ payment.get_method_display }}</td>
+        </tr>
+        {% if payment.proof_of_payment %}
+        <tr>
+          <td style="padding:0.8rem 0;border-bottom:1px solid var(--border-color);"><strong>Proof of Payment</strong></td>
+          <td style="padding:0.8rem 0;border-bottom:1px solid var(--border-color);"><a href="{{ payment.proof_of_payment.url }}" class="dashboard-btn" style="padding:0.4rem 1rem;margin:0;"><i class="fas fa-file-download" style="margin-right:0.5rem;"></i>View File</a></td>
+        </tr>
+        {% endif %}
+      </table>
+    </div>
+    
+    <div class="{% if payment.status == 'pending' %}status-pending-bg{% elif payment.status == 'confirmed' %}status-success-bg{% elif payment.status == 'failed' %}status-danger-bg{% endif %}" style="margin-top:2rem;padding:1.2rem;border-radius:10px;">
+      {% if payment.status == 'pending' %}
+        <p style="margin:0;display:flex;align-items:center;"><i class="fas fa-clock" style="margin-right:0.8rem;color:var(--warning-color);"></i> Your payment is pending review. You will be notified once it is confirmed.</p>
+      {% elif payment.status == 'confirmed' %}
+        <p style="margin:0;display:flex;align-items:center;"><i class="fas fa-check-circle" style="margin-right:0.8rem;color:var(--success-color);"></i> Your payment has been confirmed. Your subscription will be activated soon.</p>
+      {% elif payment.status == 'failed' %}
+        <p style="margin:0;display:flex;align-items:center;"><i class="fas fa-exclamation-triangle" style="margin-right:0.8rem;color:var(--danger-color);"></i> Your payment failed. Please contact support for assistance.</p>
+      {% endif %}
+    </div>
+    
+    <div class="text-center" style="margin-top:2rem;">
+      <a href="{% url 'dashboard' %}" class="dashboard-btn primary">
+        <i class="fas fa-arrow-left" style="margin-right:0.5rem;"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

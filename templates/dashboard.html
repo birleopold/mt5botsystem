@@ -1,0 +1,1012 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width:1200px;">
+  <div class="row justify-content-center">
+    <div class="col-12 text-center mb-4">
+      <div class="section-divider centered mb-4"></div>
+      <span class="trust-badge"><i class="fas fa-shield-alt me-2"></i>Trusted by 10,000+ traders</span>
+      <h1 class="display-4 mt-4 mb-2">Welcome, {{ user.username }}</h1>
+      <p class="lead text-muted mb-5">Your trading automation dashboard</p>
+    </div>
+  </div>
+  {% if show_onboarding %}
+    <div id="onboarding-modal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1050;">
+      <div class="card shadow-lg" style="max-width:500px;border-radius:12px;overflow:hidden;">
+        <div class="card-header bg-primary text-white text-center py-4">
+          <h3 class="mb-0"><i class="fas fa-rocket me-2"></i>Welcome to TheAutomata!</h3>
+        </div>
+        <div class="card-body p-4 text-center">
+          <div class="onboarding-progress mb-4">
+            <div class="progress" style="height:8px;">
+              <div id="onboarding-progress-bar" class="progress-bar bg-success" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-1">
+              <small class="text-muted">Step <span id="current-step">1</span> of 5</small>
+              <small class="text-muted">20% Complete</small>
+            </div>
+          </div>
+          
+          <div class="onboarding-icon mb-3">
+            <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" style="width:80px;height:80px;">
+              <i id="onboarding-icon" class="fas fa-clipboard-list fa-2x text-primary"></i>
+            </div>
+          </div>
+          
+          <ul id="onboarding-steps" class="list-group list-group-flush text-start mb-4">
+            <li data-step="1" class="list-group-item border-0 d-flex align-items-start">
+              <div class="me-3 pt-1">
+                <i class="fas fa-check-circle text-success fa-lg"></i>
+              </div>
+              <div>
+                <h5 class="mb-1">Choose a Plan</h5>
+                <p class="mb-0 text-muted">Select the perfect trading plan that matches your needs and budget.</p>
+              </div>
+            </li>
+            <li data-step="2" class="list-group-item border-0 d-flex align-items-start">
+              <div class="me-3 pt-1">
+                <i class="fas fa-check-circle text-success fa-lg"></i>
+              </div>
+              <div>
+                <h5 class="mb-1">Invite Friends</h5>
+                <p class="mb-0 text-muted">Share your referral link with friends and earn rewards for each sign-up.</p>
+              </div>
+            </li>
+            <li data-step="3" class="list-group-item border-0 d-flex align-items-start">
+              <div class="me-3 pt-1">
+                <i class="fas fa-check-circle text-success fa-lg"></i>
+              </div>
+              <div>
+                <h5 class="mb-1">Check Notifications</h5>
+                <p class="mb-0 text-muted">Stay updated with important alerts and system announcements.</p>
+              </div>
+            </li>
+            <li data-step="4" class="list-group-item border-0 d-flex align-items-start">
+              <div class="me-3 pt-1">
+                <i class="fas fa-check-circle text-success fa-lg"></i>
+              </div>
+              <div>
+                <h5 class="mb-1">Earn Badges</h5>
+                <p class="mb-0 text-muted">Complete achievements and showcase your trading expertise.</p>
+              </div>
+            </li>
+            <li data-step="5" class="list-group-item border-0 d-flex align-items-start">
+              <div class="me-3 pt-1">
+                <i class="fas fa-check-circle text-success fa-lg"></i>
+              </div>
+              <div>
+                <h5 class="mb-1">Contact Support</h5>
+                <p class="mb-0 text-muted">Our team is available 24/7 to assist with any questions or issues.</p>
+              </div>
+            </li>
+          </ul>
+          
+          <form method="post" action="{% url 'complete_onboarding' %}" id="onboarding-form" class="text-center">
+            {% csrf_token %}
+            <button type="button" id="onboarding-prev" class="btn btn-outline-secondary me-2" disabled><i class="fas fa-arrow-left me-1"></i>Previous</button>
+            <button type="submit" id="onboarding-next" class="btn btn-primary"><span>Next</span><i class="fas fa-arrow-right ms-1"></i></button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      (function() {
+        let currentStep = 1;
+        const totalSteps = 5;
+        const steps = document.querySelectorAll('#onboarding-steps li');
+        const nextBtn = document.getElementById('onboarding-next');
+        const prevBtn = document.getElementById('onboarding-prev');
+        const form = document.getElementById('onboarding-form');
+        const progressBar = document.getElementById('onboarding-progress-bar');
+        const currentStepEl = document.getElementById('current-step');
+        const iconEl = document.getElementById('onboarding-icon');
+        
+        const icons = [
+          'fas fa-clipboard-list',
+          'fas fa-users',
+          'fas fa-bell',
+          'fas fa-award',
+          'fas fa-headset'
+        ];
+        
+        function updateProgress(step) {
+          const percent = (step / totalSteps) * 100;
+          progressBar.style.width = percent + '%';
+          progressBar.setAttribute('aria-valuenow', percent);
+          currentStepEl.textContent = step;
+          document.querySelector('.onboarding-progress small:last-child').textContent = 
+            Math.round(percent) + '% Complete';
+        }
+        
+        function showStep(n) {
+          steps.forEach((li, idx) => {
+            li.style.display = (idx === n-1) ? 'flex' : 'none';
+          });
+          
+          // Update button states
+          prevBtn.disabled = (n === 1);
+          nextBtn.innerHTML = (n < totalSteps) ? '<span>Next</span><i class="fas fa-arrow-right ms-1"></i>' : '<span>Finish</span><i class="fas fa-check ms-1"></i>';
+          
+          // Update progress
+          updateProgress(n);
+          
+          // Update icon
+          iconEl.className = icons[n-1];
+        }
+        
+        showStep(currentStep);
+        
+        nextBtn.addEventListener('click', function(e) {
+          if (currentStep < totalSteps) {
+            e.preventDefault();
+            currentStep++;
+            showStep(currentStep);
+          }
+        });
+        
+        prevBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (currentStep > 1) {
+            currentStep--;
+            showStep(currentStep);
+          }
+        });
+      })();
+    </script>
+  {% endif %}
+
+    <!-- Main Action Cards -->
+    <div class="row mb-5">
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm hover-shadow border-0">
+          <div class="card-body text-center py-4">
+            <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;">
+              <i class="fas fa-robot fa-2x text-primary"></i>
+            </div>
+            <h3 class="card-title h4 mb-3">MQL5 Bots</h3>
+            <p class="card-text text-muted mb-4">Browse and activate automated trading bots for your MetaTrader 5 platform.</p>
+            <a href="{% url 'bots_portal' %}" class="btn btn-primary btn-lg">
+              <i class="fas fa-robot me-2"></i>Browse Bots
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm hover-shadow border-0">
+          <div class="card-body text-center py-4">
+            <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;">
+              <i class="fas fa-chart-line fa-2x text-success"></i>
+            </div>
+            <h3 class="card-title h4 mb-3">Trading Analytics</h3>
+            <p class="card-text text-muted mb-4">View detailed performance metrics and insights for your trading strategies.</p>
+            <a href="{% url 'trading_dashboard' %}" class="btn btn-success btn-lg">
+              <i class="fas fa-chart-line me-2"></i>View Analytics
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm hover-shadow border-0">
+          <div class="card-body text-center py-4">
+            <div class="rounded-circle bg-info bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;">
+              <i class="fas fa-graduation-cap fa-2x text-info"></i>
+            </div>
+            <h3 class="card-title h4 mb-3">Learning Center</h3>
+            <p class="card-text text-muted mb-4">Access tutorials, guides, and resources to maximize your trading potential.</p>
+            <a href="{% url 'learning_center' %}" class="btn btn-info btn-lg text-white">
+              <i class="fas fa-graduation-cap me-2"></i>Start Learning
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Dashboard Sections -->
+    <div class="row">
+      <!-- XP and Badges Section -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-light py-3">
+            <h3 class="mb-0"><i class="fas fa-award text-primary me-2"></i>Your Achievements</h3>
+          </div>
+          <div class="card-body">
+            {% include 'partials/xp_badges.html' %}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Social Share Section -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-light py-3">
+            <h3 class="mb-0"><i class="fas fa-share-alt text-primary me-2"></i>Share & Earn</h3>
+          </div>
+          <div class="card-body">
+            {% include 'partials/social_share.html' %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
+            <h3 class="mb-0"><i class="fas fa-chart-area text-primary me-2"></i>Your Trading Progress</h3>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="timeRangeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-calendar-alt me-1"></i>Last 30 Days
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="timeRangeDropdown">
+                <li><a class="dropdown-item" href="#" data-range="7">Last 7 Days</a></li>
+                <li><a class="dropdown-item active" href="#" data-range="30">Last 30 Days</a></li>
+                <li><a class="dropdown-item" href="#" data-range="90">Last 90 Days</a></li>
+                <li><a class="dropdown-item" href="#" data-range="365">Last Year</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="card-body p-4">
+            <div class="row mb-4">
+              <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                <div class="p-3 bg-primary bg-opacity-10 rounded text-center">
+                  <h2 class="display-5 fw-bold text-primary mb-0" id="totalXP">0</h2>
+                  <p class="text-muted mb-0">Total XP</p>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                <div class="p-3 bg-success bg-opacity-10 rounded text-center">
+                  <h2 class="display-5 fw-bold text-success mb-0" id="forumPosts">0</h2>
+                  <p class="text-muted mb-0">Forum Posts</p>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                <div class="p-3 bg-info bg-opacity-10 rounded text-center">
+                  <h2 class="display-5 fw-bold text-info mb-0" id="completedTasks">0</h2>
+                  <p class="text-muted mb-0">Completed Tasks</p>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6">
+                <div class="p-3 bg-warning bg-opacity-10 rounded text-center">
+                  <h2 class="display-5 fw-bold text-warning mb-0" id="referralCount">{{ referred_count }}</h2>
+                  <p class="text-muted mb-0">Referrals</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-container" style="position: relative; height:300px;">
+              <canvas id="xpChart"></canvas>
+            </div>
+            
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+              document.addEventListener('DOMContentLoaded', function() {
+                // Fetch analytics data
+                fetch('/analytics/user-data/')
+                  .then(res => res.json())
+                  .then(data => {
+                    // Update stats
+                    document.getElementById('totalXP').innerText = data.total_xp || 0;
+                    document.getElementById('forumPosts').innerText = data.forum_posts || 0;
+                    document.getElementById('completedTasks').innerText = data.completed_tasks || 0;
+                    
+                    // Create chart
+                    const ctx = document.getElementById('xpChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                      type: 'line',
+                      data: {
+                        labels: data.xp_over_time.map(d => d.date),
+                        datasets: [{
+                          label: 'XP Earned',
+                          data: data.xp_over_time.map(d => d.xp),
+                          borderColor: '#0d6efd',
+                          backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                          borderWidth: 2,
+                          pointBackgroundColor: '#0d6efd',
+                          pointRadius: 4,
+                          tension: 0.3,
+                          fill: true
+                        }]
+                      },
+                      options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: {
+                            position: 'top',
+                          },
+                          tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1,
+                            padding: 10,
+                            displayColors: false
+                          }
+                        },
+                        scales: {
+                          x: {
+                            grid: {
+                              display: false
+                            }
+                          },
+                          y: {
+                            beginAtZero: true,
+                            grid: {
+                              color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                          }
+                        }
+                      }
+                    });
+                    
+                    // Time range dropdown functionality
+                    const rangeLinks = document.querySelectorAll('[data-range]');
+                    rangeLinks.forEach(link => {
+                      link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const days = parseInt(this.getAttribute('data-range'));
+                        document.getElementById('timeRangeDropdown').innerHTML = 
+                          `<i class="fas fa-calendar-alt me-1"></i>Last ${days} Days`;
+                        
+                        // Update active state
+                        rangeLinks.forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Here you would fetch new data based on the range
+                        // For demo purposes, we're just showing the UI update
+                      });
+                    });
+                  });
+              });
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Referral Section -->
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-light py-3">
+            <h3 class="mb-0"><i class="fas fa-user-plus text-primary me-2"></i>Your Referral Program</h3>
+          </div>
+          <div class="card-body p-4">
+            <div class="row align-items-center">
+              <div class="col-lg-6 mb-4 mb-lg-0">
+                <h4 class="mb-3">Share & Earn Rewards</h4>
+                <p class="text-muted mb-4">Invite your friends to join TheAutomata and earn exclusive rewards for each successful referral. The more friends you invite, the more rewards you unlock!</p>
+                
+                <div class="referral-link-container mb-4">
+                  <label for="referralLink" class="form-label">Your Unique Referral Link:</label>
+                  <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="referralLink" value="{{ request.build_absolute_uri|slice:':-1' }}?ref={{ referral.code }}" readonly>
+                    <button class="btn btn-primary" type="button" onclick="copyReferralLink()">
+                      <i class="fas fa-copy me-1"></i>Copy
+                    </button>
+                  </div>
+                  <div class="form-text">Share this link via email, social media, or messaging apps.</div>
+                </div>
+                
+                <div class="d-flex gap-2 mb-4">
+                  <button class="btn btn-outline-primary" onclick="shareReferral('facebook')">
+                    <i class="fab fa-facebook-f me-1"></i>Share
+                  </button>
+                  <button class="btn btn-outline-info" onclick="shareReferral('twitter')">
+                    <i class="fab fa-twitter me-1"></i>Tweet
+                  </button>
+                  <button class="btn btn-outline-success" onclick="shareReferral('whatsapp')">
+                    <i class="fab fa-whatsapp me-1"></i>WhatsApp
+                  </button>
+                  <button class="btn btn-outline-secondary" onclick="shareReferral('email')">
+                    <i class="fas fa-envelope me-1"></i>Email
+                  </button>
+                </div>
+              </div>
+              
+              <div class="col-lg-6">
+                <div class="card bg-light border-0">
+                  <div class="card-body">
+                    <h5 class="card-title mb-3">Your Referral Stats</h5>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                      <div class="flex-shrink-0 me-3">
+                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width:50px;height:50px;">
+                          <i class="fas fa-users text-white"></i>
+                        </div>
+                      </div>
+                      <div>
+                        <h6 class="mb-0">Total Referrals</h6>
+                        <p class="display-6 mb-0">{{ referred_count }}</p>
+                      </div>
+                    </div>
+                    
+                    {% if rewards %}
+                    <h5 class="mt-4 mb-3">Your Rewards</h5>
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for reward in rewards %}
+                          <tr>
+                            <td>{{ reward.granted_at|date:"M d, Y" }}</td>
+                            <td>
+                              <span class="badge bg-{% if reward.reward_type == 'xp' %}primary{% elif reward.reward_type == 'discount' %}success{% elif reward.reward_type == 'extension' %}warning{% else %}info{% endif %}">
+                                {{ reward.reward_type|title }}
+                              </span>
+                            </td>
+                            <td>{{ reward.reward_value }}</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info mt-3 mb-0">
+                      <i class="fas fa-info-circle me-2"></i>You haven't earned any rewards yet. Start sharing your referral link to earn rewards!
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      function copyReferralLink() {
+        const referralLink = document.getElementById('referralLink');
+        referralLink.select();
+        document.execCommand('copy');
+        
+        // Show toast notification
+        const toast = document.createElement('div');
+        toast.className = 'position-fixed bottom-0 end-0 p-3';
+        toast.style.zIndex = '5';
+        toast.innerHTML = `
+          <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+              <i class="fas fa-check-circle text-success me-2"></i>
+              <strong class="me-auto">Success</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+              Referral link copied to clipboard!
+            </div>
+          </div>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.remove();
+        }, 3000);
+      }
+      
+      function shareReferral(platform) {
+        const referralLink = document.getElementById('referralLink').value;
+        const message = 'Join TheAutomata for automated trading solutions!';
+        let shareUrl = '';
+        
+        switch(platform) {
+          case 'facebook':
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=${encodeURIComponent(message)}`;
+            break;
+          case 'twitter':
+            shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(referralLink)}`;
+            break;
+          case 'whatsapp':
+            shareUrl = `https://wa.me/?text=${encodeURIComponent(message + ' ' + referralLink)}`;
+            break;
+          case 'email':
+            shareUrl = `mailto:?subject=${encodeURIComponent('Check out TheAutomata')}&body=${encodeURIComponent(message + '\n\n' + referralLink)}`;
+            break;
+        }
+        
+        if (shareUrl) {
+          window.open(shareUrl, '_blank');
+        }
+      }
+    </script>
+    <!-- Support Tickets Section -->
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
+            <h3 class="mb-0"><i class="fas fa-ticket-alt text-primary me-2"></i>Your Support Tickets</h3>
+            <a href="{% url 'submit_ticket' %}" class="btn btn-primary">
+              <i class="fas fa-plus-circle me-2"></i>New Ticket
+            </a>
+          </div>
+          <div class="card-body p-4">
+            {% if tickets %}
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Subject</th>
+                      <th>Status</th>
+                      <th>Created</th>
+                      <th>Last Update</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for ticket in tickets %}
+                      <tr>
+                        <td>#{{ ticket.id }}</td>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0 me-2">
+                              {% if ticket.priority == 'high' %}
+                                <span class="badge rounded-pill bg-danger">!</span>
+                              {% elif ticket.priority == 'medium' %}
+                                <span class="badge rounded-pill bg-warning">!</span>
+                              {% endif %}
+                            </div>
+                            <div>
+                              <h6 class="mb-0">{{ ticket.subject }}</h6>
+                              <small class="text-muted">{{ ticket.message|truncatechars:60 }}</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-{% if ticket.status == 'open' %}success{% elif ticket.status == 'pending' %}warning{% elif ticket.status == 'closed' %}secondary{% else %}info{% endif %}">
+                            {{ ticket.get_status_display }}
+                          </span>
+                        </td>
+                        <td><small>{{ ticket.created_at|date:"M d, Y" }}</small></td>
+                        <td><small>{{ ticket.updated_at|date:"M d, Y" }}</small></td>
+                        <td>
+                          <a href="{% url 'view_ticket' ticket.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye me-1"></i>View
+                          </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="text-center py-5">
+                <div class="mb-4">
+                  <i class="fas fa-ticket-alt fa-4x text-muted"></i>
+                </div>
+                <h4>No Support Tickets</h4>
+                <p class="text-muted mb-4">You haven't created any support tickets yet.</p>
+                <a href="{% url 'submit_ticket' %}" class="btn btn-primary">
+                  <i class="fas fa-plus-circle me-2"></i>Create Your First Ticket
+                </a>
+              </div>
+            {% endif %}
+          </div>
+          <div class="card-footer bg-light py-3">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-headset text-success me-2"></i>
+              <span>Need help? Our support team is available 24/7 to assist you.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Subscription Section -->
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
+            <h3 class="mb-0"><i class="fas fa-credit-card text-primary me-2"></i>Your Subscription</h3>
+            <a href="{% url 'plan_list' %}" class="btn btn-outline-primary">
+              <i class="fas fa-exchange-alt me-2"></i>Change Plan
+            </a>
+          </div>
+          <div class="card-body p-4">
+            {% if subscriptions %}
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>Plan</th>
+                      <th>Status</th>
+                      <th>Start Date</th>
+                      <th>End/Renewal Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for sub in subscriptions %}
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0 me-3">
+                              <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width:45px;height:45px;">
+                                <i class="fas fa-crown {% if sub.plan.name == 'Premium' %}text-warning{% elif sub.plan.name == 'Pro' %}text-info{% else %}text-primary{% endif %}"></i>
+                              </div>
+                            </div>
+                            <div>
+                              <h6 class="mb-0">{{ sub.plan.name }}</h6>
+                              {% if sub.plan.price %}
+                                <small class="text-muted">${{ sub.plan.price }} / {{ sub.plan.billing_cycle|default:"month" }}</small>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          {% if sub.is_active %}
+                            <span class="badge bg-success">Active</span>
+                            {% if sub.end_date and sub.is_active and sub.end_date|date:'U' <= now|add:'604800' %}
+                              <span class="badge bg-warning text-dark ms-1">Expiring Soon</span>
+                            {% endif %}
+                          {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                          {% endif %}
+                        </td>
+                        <td>{{ sub.start_date|date:"M d, Y" }}</td>
+                        <td>
+                          {% if sub.end_date %}
+                            {{ sub.end_date|date:"M d, Y" }}
+                            {% if sub.is_active %}
+                              <div class="progress mt-1" style="height: 4px;">
+                                {% now "U" as current_time %}
+                                {% with end_timestamp=sub.end_date|date:"U"|floatformat:0 %}
+                                  {% with start_timestamp=sub.start_date|date:"U"|floatformat:0 %}
+                                    {% with total_duration=end_timestamp|add:"-"|add:start_timestamp %}
+                                      {% with time_left=end_timestamp|add:"-"|add:current_time %}
+                                        {% with percent_complete=time_left|floatformat:0|add:"0" %}
+                                          {% with percent_display=percent_complete|default:"50" %}
+                                            <div class="progress-bar {% if percent_complete < 25 %}bg-danger{% elif percent_complete < 50 %}bg-warning{% else %}bg-success{% endif %}" role="progressbar" style="width: {{ percent_display }}%" aria-valuenow="{{ percent_display }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                          {% endwith %}
+                                        {% endwith %}
+                                      {% endwith %}
+                                    {% endwith %}
+                                  {% endwith %}
+                                {% endwith %}
+                              </div>
+                            {% endif %}
+                          {% else %}
+                            <span class="badge bg-info">Lifetime</span>
+                          {% endif %}
+                        </td>
+                        <td>
+                          <div class="d-flex gap-2">
+                            {% if sub.is_active %}
+                              <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="subscriptionActions{{ sub.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                  <i class="fas fa-cog me-1"></i>Actions
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="subscriptionActions{{ sub.id }}">
+                                  <li>
+                                    <form method="post" action="{% url 'renew_subscription' sub.id %}" class="dropdown-item-form">
+                                      {% csrf_token %}
+                                      <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sync-alt me-2"></i>Renew Subscription
+                                      </button>
+                                    </form>
+                                  </li>
+                                  <li>
+                                    <a href="{% url 'subscription_details' sub.id %}" class="dropdown-item">
+                                      <i class="fas fa-info-circle me-2"></i>View Details
+                                    </a>
+                                  </li>
+                                  <li><hr class="dropdown-divider"></li>
+                                  <li>
+                                    <form method="post" action="{% url 'cancel_subscription' sub.id %}" class="dropdown-item-form">
+                                      {% csrf_token %}
+                                      <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-times-circle me-2"></i>Cancel Subscription
+                                      </button>
+                                    </form>
+                                  </li>
+                                </ul>
+                              </div>
+                            {% else %}
+                              <form method="post" action="{% url 'renew_subscription' sub.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success">
+                                  <i class="fas fa-sync-alt me-1"></i>Renew
+                                </button>
+                              </form>
+                            {% endif %}
+                          </div>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="text-center py-5">
+                <div class="mb-4">
+                  <i class="fas fa-crown fa-4x text-muted"></i>
+                </div>
+                <h4>No Active Subscriptions</h4>
+                <p class="text-muted mb-4">You don't have any active subscriptions. Subscribe to a plan to access our trading bots and premium features.</p>
+                <a href="{% url 'plan_list' %}" class="btn btn-primary">
+                  <i class="fas fa-list-alt me-2"></i>Browse Available Plans
+                </a>
+              </div>
+            {% endif %}
+          </div>
+          {% if subscriptions and subscriptions.0.is_active %}
+          <div class="card-footer bg-light py-3">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-info-circle text-primary me-2"></i>
+              <span>Your subscription includes access to all trading bots, priority support, and real-time analytics.</span>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <style>
+    .dropdown-item-form {
+      display: inline-block;
+      width: 100%;
+    }
+    .dropdown-item-form .dropdown-item {
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      padding: .25rem 1rem;
+    }
+    </style>
+  <h3>Change Plan</h3>
+  {% if subscriptions %}
+    <form method="post" action="{% url 'request_plan_change' %}">
+      {% csrf_token %}
+      <label for="plan-select">Choose a new plan:</label>
+      <select name="plan_id" id="plan-select" class="dashboard-select">
+        {% for plan in available_plans %}
+          <option value="{{ plan.id }}">{{ plan.name }}{% if plan.price %} - {{ plan.price }}{% endif %}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="request-btn">Request Change</button>
+    </form>
+  {% else %}
+    <div class="dashboard-alert warning">
+      <b>You need an active subscription to change plans.</b>
+    </div>
+  {% endif %}
+  <h3>Your Subscriptions</h3>
+  {% if subscriptions %}
+    <ul>
+      {% for sub in subscriptions %}
+        <li>{{ sub.plan.name }} — {{ sub.start_date|date:"Y-m-d" }} {% if sub.is_active %}(Active){% else %}(Inactive){% endif %}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No active subscriptions.</p>
+  {% endif %}
+  <h3>Payment History</h3>
+  {% if payments %}
+    <table class="dashboard-table">
+      <tr><th>Date</th><th>Amount</th><th>Status</th><th>Method</th><th>Invoice</th></tr>
+      {% for pay in payments %}
+        <tr>
+          <td>{{ pay.created_at|date:"Y-m-d H:i" }}</td>
+          <td>{{ pay.amount }}</td>
+          <td>
+            {% if pay.status == 'paid' %}
+              <span class="paid-status">Paid</span>
+            {% else %}
+              <span class="unpaid-status">{{ pay.status|capfirst }}</span>
+            {% endif %}
+          </td>
+          <td>{{ pay.method|default:'-' }}</td>
+          <td>
+            {% if pay.invoice_url %}
+              <a href="{{ pay.invoice_url }}" target="_blank">Download</a>
+            {% else %}-{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <div class="no-payment-history">
+      <b>No payment history found.</b>
+    </div>
+  {% endif %}
+  <h3>Your Payments</h3>
+  {% if payments %}
+    <table>
+      <tr><th>Date</th><th>Plan</th><th>Amount</th><th>Method</th><th>Status</th><th>Proof</th></tr>
+      {% for payment in payments %}
+        <tr>
+          <td>{{ payment.created_at|date:"Y-m-d H:i" }}</td>
+          <td>{{ payment.plan.name }}</td>
+          <td>${{ payment.amount }}</td>
+          <td>{{ payment.get_method_display }}</td>
+          <td>{{ payment.get_status_display }}</td>
+          <td>
+            {% if payment.proof_of_payment %}
+              <a href="{{ payment.proof_of_payment.url }}">View</a>
+            {% else %}-{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No payments yet.</p>
+  {% endif %}
+  <h3>Your EAs & Licenses</h3>
+  {% if eas %}
+    <table>
+      <tr><th>EA Name</th><th>Description</th><th>Downloads & Version History</th><th>Your License Key</th><th>Actions</th><th>Expiry</th></tr>
+      {% for ea in eas %}
+        <tr>
+          <td>{{ ea.name }}</td>
+          <td title="{{ ea.description }}">{{ ea.description|truncatechars:60 }}</td>
+          <td>
+            {% if ea_files.ea.id %}
+              <ul>
+                {% for file in ea_files.ea.id %}
+                  <li>
+                    <a href="{{ file.file.url }}">Download</a>
+                    <span>v{{ file.version }}</span>
+                    {% if file.changelog %}
+                      <br><span title="{{ file.changelog }}">Changelog: {{ file.changelog|truncatechars:40 }}</span>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}-{% endif %}
+          </td>
+          <td>
+            {% for lic in licenses %}
+              {% if lic.ea.id == ea.id %}
+                <span id="lic-{{ lic.id }}">{{ lic.key }}</span>
+                <span class="badge badge-{{ lic.status }}">{{ lic.status|capfirst }}{% if lic.is_expired %} (Expired){% endif %}</span>
+                <button type="button" class="copy-btn" data-lic-id="lic-{{ lic.id }}">Copy</button>
+                {% if lic.status == 'active' and not lic.is_expired %}
+                  <form method="post" action="{% url 'revoke_license' lic.id %}" onsubmit="return confirm('Are you sure you want to revoke this license?');">{% csrf_token %}<button type="submit" class="revoke-btn">Revoke</button></form>
+                {% endif %}
+              {% endif %}
+            {% empty %}
+              <span>No license</span>
+            {% endfor %}
+          </td>
+          <td>
+            {% with found_license=False %}
+              {% for lic in licenses %}
+                {% if lic.ea.id == ea.id %}
+                  {% with found_license=True %}{% endwith %}
+                {% endif %}
+              {% endfor %}
+              {% if not found_license %}
+                <form method="post" action="{% url 'request_license' ea.id %}">{% csrf_token %}<button type="submit" class="request-btn">Request License</button></form>
+              {% endif %}
+            {% endwith %}
+          </td>
+          <td>
+            {% for lic in licenses %}
+              {% if lic.ea.id == ea.id %}
+                {% if lic.expires_at %}
+                  {{ lic.expires_at|date:"Y-m-d H:i" }}
+                  {% if lic.is_expired %}<span class="expired"> (Expired)</span>{% endif %}
+                {% else %}
+                  <span>No expiry</span>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <div class="no-eas">
+      <b>You have no EAs or licenses available.</b> <br>Subscribe to a plan to access EAs and manage your licenses here.
+    </div>
+  {% endif %}
+  <div class="download-all-eas">
+    <button onclick="downloadAllEAs()" class="dashboard-btn primary">Download All EAs</button>
+    <input type="text" id="ea-search" placeholder="Search EAs by name..." class="dashboard-input">
+  </div>
+  {% comment %} Social Share Section with campaign selection and reward notification {% endcomment %}
+  <section aria-label="Social sharing" class="social-sharing">
+    <div class="referral-section">
+      <h2 class="section-heading">Share Your Achievements</h2>
+      
+      <div class="input-group">
+        <label for="referral-link" class="sr-only">Referral Link</label>
+        <input type="text" 
+               id="referral-link" 
+               value="{{ request.build_absolute_uri|add:'?ref='|add:user.username }}"
+               readonly
+               class="referral-input">
+        <button type="button" class="copy-button" aria-label="Copy to clipboard">
+          <span class="button-text">Copy Link</span>
+          <svg class="copy-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="message-selector">
+        <label for="campaign-message" class="selector-label">Pre-written Messages:</label>
+        <select id="campaign-message" class="message-dropdown">
+          {% for option in share_message_options %}
+          <option value="{{ option }}">{{ option }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="platform-grid" role="group" aria-label="Social media platforms">
+        {% for platform in platforms %}
+        <button type="button" 
+                class="platform-button" 
+                data-platform="{{ platform.name|lower }}"
+                aria-label="Share on {{ platform.name }}">
+          <svg class="platform-icon" aria-hidden="true">
+            <use href="{% static 'icons/sprite.svg' %}#{{ platform.icon }}"></use>
+          </svg>
+          <span class="platform-name">{{ platform.name }}</span>
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div id="share-feedback" class="feedback-toast" hidden role="alert">
+      <span class="toast-message"></span>
+    </div>
+  </section>
+  <script>
+    function copyReferral() {
+      var input = document.getElementById('referral-link');
+      input.select();
+      document.execCommand('copy');
+      alert('Referral link copied!');
+    }
+    function shareOnPlatform(platform, urlTemplate) {
+      var msg = document.getElementById('campaign-message').value;
+      var url = document.getElementById('referral-link').value;
+      var shareUrl = urlTemplate.replace('{url}', encodeURIComponent(url)).replace('{msg}', encodeURIComponent(msg));
+      window.open(shareUrl, '_blank');
+      trackShare(platform, url, msg);
+    }
+    function trackShare(platform, url, message) {
+      fetch("/analytics/share-event/", {
+        method: "POST",
+        headers: {"Content-Type": "application/json", "X-CSRFToken": '{{ csrf_token }}'},
+        body: JSON.stringify({platform: platform, referral_url: url, message: message})
+      })
+      .then(function(resp) { if(resp.ok) showShareRewardToast(); });
+    }
+    function showShareRewardToast() {
+      var toast = document.getElementById('share-feedback');
+      toast.style.display = 'block';
+      setTimeout(function() { toast.style.display = 'none'; }, 1800);
+    }
+  </script>
+  <div class="text-end" style="margin:0 0 2em 0;">
+    <a href="/api-token/" class="dashboard-btn primary">API Token &amp; Integration</a>
+    <a href="/api-docs/" class="dashboard-btn success" style="margin-left:1em;">API Docs</a>
+    <a href="/support/" class="dashboard-btn warning" style="margin-left:1em;">Need Help?</a>
+    <a href="/forum/" class="dashboard-btn primary" style="background:var(--info-color); margin-left:1em;">Community Forum</a>
+  </div>
+  <a href="{% url 'plan_list' %}">Subscribe or Renew</a> |
+  <a href="{% url 'logout' %}">Logout</a>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <script src="{% static 'js/main.js' %}"></script>
+  <script src="{% static 'js/charts.js' %}"></script>
+{% endblock %}

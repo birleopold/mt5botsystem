@@ -1,0 +1,66 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+<div class="dashboard-module">
+    <h1>Admin Dashboard</h1>
+    <div class="dashboard-stats">
+        <div class="stat">
+            <h2>Total Users</h2>
+            <p>{{ total_users }}</p>
+        </div>
+        <div class="stat">
+            <h2>Total Revenue</h2>
+            <p>${{ total_revenue }}</p>
+        </div>
+        <div class="stat">
+            <h2>Active Subscriptions</h2>
+            <p>{{ active_subscriptions }}</p>
+        </div>
+        <div class="stat">
+            <h2>New Users (Last 7 Days)</h2>
+            <p>{{ new_users }}</p>
+        </div>
+        <div class="stat">
+            <h2>New Revenue (Last 7 Days)</h2>
+            <p>${{ new_revenue }}</p>
+        </div>
+    </div>
+    <div class="dashboard-graphs">
+        <h2>Revenue (Last 30 Days)</h2>
+        <canvas id="revenueChart" width="600" height="200"></canvas>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('revenueChart').getContext('2d');
+    var revenueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ revenue_dates|safe }},
+            datasets: [{
+                label: 'Revenue',
+                data: {{ revenue_values|safe }},
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+<style>
+.dashboard-module { max-width: 900px; margin: 0 auto; padding: 2rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+.dashboard-module h1 { margin-bottom: 2rem; text-align: center; }
+.dashboard-stats { display: flex; flex-wrap: wrap; justify-content: space-around; }
+.stat { text-align: center; background: #f9f9f9; padding: 1.5rem 2rem; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin: 1rem; min-width: 180px; }
+.stat h2 { margin-bottom: 1rem; font-size: 1.2rem; color: #333; }
+.stat p { font-size: 2rem; font-weight: bold; color: #007bff; }
+.dashboard-graphs { margin-top: 2rem; }
+</style>
+<a href="{% url 'admin:index' %}">Back to Admin Home</a>
+{% endblock %}

@@ -1,0 +1,451 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load learning_filters %}
+
+{% block extra_css %}
+<style>
+  .resource-header {
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+    padding: 3rem 0;
+    color: white;
+    margin-bottom: 3rem;
+  }
+  
+  .resource-content {
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+  
+  .resource-content img {
+    max-width: 100%;
+    height: auto;
+    margin: 1.5rem 0;
+    border-radius: 0.5rem;
+  }
+  
+  .resource-content h2, 
+  .resource-content h3, 
+  .resource-content h4 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .resource-content ul, 
+  .resource-content ol {
+    margin-bottom: 1.5rem;
+  }
+  
+  .resource-content blockquote {
+    border-left: 4px solid #0d6efd;
+    padding-left: 1rem;
+    margin-left: 0;
+    color: #495057;
+    font-style: italic;
+  }
+  
+  .resource-sidebar {
+    position: sticky;
+    top: 2rem;
+  }
+  
+  .progress-circle {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1.5rem;
+  }
+  
+  .progress-circle-bg {
+    fill: none;
+    stroke: #e9ecef;
+    stroke-width: 8;
+  }
+  
+  .progress-circle-progress {
+    fill: none;
+    stroke: #0d6efd;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 0.3s ease;
+  }
+  
+  .progress-circle-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    fill: #0d6efd;
+  }
+  
+  .related-resource-card {
+    transition: transform 0.3s ease;
+    height: 100%;
+  }
+  
+  .related-resource-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .resource-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 0 0.25rem 0 0.5rem;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  
+  .pdf-container {
+    width: 100%;
+    height: 600px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="resource-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto text-center">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-center mb-3">
+            <li class="breadcrumb-item"><a href="{% url 'learning_center' %}" class="text-white">Learning Center</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'learning_category' resource.category.slug %}" class="text-white">{{ resource.category.name }}</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">{{ resource.title }}</li>
+          </ol>
+        </nav>
+        <h1 class="display-5 fw-bold mb-3">{{ resource.title }}</h1>
+        <div class="d-flex justify-content-center align-items-center mb-3">
+          <span class="badge 
+            {% if resource.access_level == 'free' %}bg-success
+            {% elif resource.access_level == 'basic' %}bg-info
+            {% elif resource.access_level == 'premium' %}bg-warning text-dark
+            {% elif resource.access_level == 'pro' %}bg-danger
+            {% endif %} me-2">
+            <i class="fas 
+              {% if resource.access_level == 'free' %}fa-unlock
+              {% elif resource.access_level == 'basic' %}fa-star
+              {% elif resource.access_level == 'premium' %}fa-crown
+              {% elif resource.access_level == 'pro' %}fa-gem
+              {% endif %} me-1"></i>
+            {{ resource.get_access_level_display }}
+          </span>
+          <span class="badge bg-secondary me-2">
+            <i class="fas 
+              {% if resource.resource_type == 'article' %}fa-file-alt
+              {% elif resource.resource_type == 'video' %}fa-video
+              {% elif resource.resource_type == 'pdf' %}fa-file-pdf
+              {% elif resource.resource_type == 'course' %}fa-graduation-cap
+              {% elif resource.resource_type == 'webinar' %}fa-laptop
+              {% else %}fa-file{% endif %} me-1"></i>
+            {{ resource.get_resource_type_display }}
+          </span>
+          <span class="text-white"><i class="far fa-clock me-1"></i>{{ resource.estimated_duration }} min</span>
+        </div>
+        <p class="lead mb-0">{{ resource.description }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+      <!-- Video Embed -->
+      {% if resource.resource_type == 'video' and resource.video_url %}
+        <div class="video-container">
+          <iframe src="{{ resource.video_url }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      {% endif %}
+      
+      <!-- PDF Embed -->
+      {% if resource.resource_type == 'pdf' and resource.file %}
+        <div class="pdf-container">
+          <object data="{{ resource.file.url }}" type="application/pdf" width="100%" height="100%">
+            <p>It appears you don't have a PDF plugin for this browser. 
+              <a href="{% url 'download_resource' resource.id %}">Click here to download the PDF file.</a>
+            </p>
+          </object>
+        </div>
+      {% endif %}
+      
+      <!-- Article Content -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+          <div class="resource-content">
+            {% if resource.content %}
+              {{ resource.content|safe }}
+            {% else %}
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>This resource doesn't have embedded content. Please use the sidebar options to access the material.
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Related Resources -->
+      {% if related_resources %}
+        <div class="card shadow-sm">
+          <div class="card-header bg-white">
+            <h4 class="mb-0">Related Resources</h4>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              {% for related in related_resources %}
+                <div class="col-md-6 mb-3">
+                  <div class="card related-resource-card h-100 position-relative">
+                    {% if related.access_level != 'free' %}
+                      <div class="resource-badge bg-warning text-dark">
+                        <i class="fas 
+                          {% if related.access_level == 'basic' %}fa-star
+                          {% elif related.access_level == 'premium' %}fa-crown
+                          {% elif related.access_level == 'pro' %}fa-gem
+                          {% endif %} me-1"></i>
+                        {{ related.get_access_level_display }}
+                      </div>
+                    {% endif %}
+                    <div class="card-body">
+                      <div class="d-flex align-items-center mb-2">
+                        <i class="fas 
+                          {% if related.resource_type == 'article' %}fa-file-alt text-primary
+                          {% elif related.resource_type == 'video' %}fa-video text-danger
+                          {% elif related.resource_type == 'pdf' %}fa-file-pdf text-success
+                          {% elif related.resource_type == 'course' %}fa-graduation-cap text-warning
+                          {% elif related.resource_type == 'webinar' %}fa-laptop text-info
+                          {% else %}fa-file text-secondary{% endif %} me-2"></i>
+                        <span class="small text-muted">{{ related.get_resource_type_display }}</span>
+                      </div>
+                      <h6 class="card-title">{{ related.title }}</h6>
+                      <a href="{{ related.get_absolute_url }}" class="stretched-link"></a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <div class="resource-sidebar">
+        <!-- Progress Tracking -->
+        {% if progress %}
+          <div class="card shadow-sm mb-4">
+            <div class="card-body text-center p-4">
+              <h5 class="card-title mb-3">Your Progress</h5>
+              
+              <div class="progress-circle">
+                <svg viewBox="0 0 100 100">
+                  <circle class="progress-circle-bg" cx="50" cy="50" r="45"></circle>
+                  <circle class="progress-circle-progress" cx="50" cy="50" r="45" 
+                          stroke-dasharray="283" 
+                          stroke-dashoffset="{{ 283|add:'-'|add:progress.progress_percent|add:'*2.83'|floatformat:0 }}"></circle>
+                  <text class="progress-circle-text" x="50" y="55" text-anchor="middle">{{ progress.progress_percent }}%</text>
+                </svg>
+              </div>
+              
+              {% if progress.completed %}
+                <div class="alert alert-success">
+                  <i class="fas fa-check-circle me-2"></i>You've completed this resource!
+                </div>
+              {% endif %}
+              
+              <div class="d-grid gap-2">
+                <button id="markComplete" class="btn btn-primary" {% if progress.completed %}disabled{% endif %}>
+                  <i class="fas fa-check-circle me-2"></i>Mark as Complete
+                </button>
+                
+                <div class="progress mt-3" style="height: 8px;">
+                  <div class="progress-bar" role="progressbar" style="width: {{ progress.progress_percent }}%" 
+                       aria-valuenow="{{ progress.progress_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                
+                <div class="btn-group mt-2">
+                  <button class="btn btn-outline-primary btn-sm progress-btn" data-percent="25">25%</button>
+                  <button class="btn btn-outline-primary btn-sm progress-btn" data-percent="50">50%</button>
+                  <button class="btn btn-outline-primary btn-sm progress-btn" data-percent="75">75%</button>
+                  <button class="btn btn-outline-primary btn-sm progress-btn" data-percent="100">100%</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        
+        <!-- Resource Actions -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-body p-4">
+            <h5 class="card-title mb-3">Resource Actions</h5>
+            
+            <div class="d-grid gap-2">
+              {% if resource.file %}
+                <a href="{% url 'download_resource' resource.id %}" class="btn btn-success">
+                  <i class="fas fa-download me-2"></i>Download Resource
+                </a>
+              {% endif %}
+              
+              <a href="{% url 'my_learning' %}" class="btn btn-outline-primary">
+                <i class="fas fa-book-reader me-2"></i>My Learning Dashboard
+              </a>
+              
+              <a href="{% url 'learning_category' resource.category.slug %}" class="btn btn-outline-secondary">
+                <i class="fas fa-th-list me-2"></i>Browse More in {{ resource.category.name }}
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Resource Info -->
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <h5 class="card-title mb-3">Resource Information</h5>
+            
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                <span><i class="fas fa-calendar-alt me-2 text-muted"></i>Published</span>
+                <span class="badge bg-light text-dark">{{ resource.created_at|date:"M d, Y" }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                <span><i class="fas fa-clock me-2 text-muted"></i>Duration</span>
+                <span class="badge bg-light text-dark">{{ resource.estimated_duration }} minutes</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                <span><i class="fas fa-eye me-2 text-muted"></i>Views</span>
+                <span class="badge bg-light text-dark">{{ resource.view_count }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                <span><i class="fas fa-tag me-2 text-muted"></i>Category</span>
+                <a href="{% url 'learning_category' resource.category.slug %}" class="badge bg-primary">{{ resource.category.name }}</a>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                <span><i class="fas fa-lock me-2 text-muted"></i>Access Level</span>
+                <span class="badge 
+                  {% if resource.access_level == 'free' %}bg-success
+                  {% elif resource.access_level == 'basic' %}bg-info
+                  {% elif resource.access_level == 'premium' %}bg-warning text-dark
+                  {% elif resource.access_level == 'pro' %}bg-danger
+                  {% endif %}">
+                  {{ resource.get_access_level_display }}
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Progress tracking functionality
+    const markCompleteBtn = document.getElementById('markComplete');
+    const progressBtns = document.querySelectorAll('.progress-btn');
+    const progressCircle = document.querySelector('.progress-circle-progress');
+    const progressText = document.querySelector('.progress-circle-text');
+    
+    if (markCompleteBtn) {
+      markCompleteBtn.addEventListener('click', function() {
+        updateProgress(100, true);
+        this.disabled = true;
+      });
+    }
+    
+    if (progressBtns) {
+      progressBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const percent = parseInt(this.dataset.percent);
+          updateProgress(percent, percent === 100);
+          
+          if (percent === 100 && markCompleteBtn) {
+            markCompleteBtn.disabled = true;
+          }
+        });
+      });
+    }
+    
+    function updateProgress(percent, completed) {
+      // Update UI first for better UX
+      if (progressCircle) {
+        const circumference = 2 * Math.PI * 45;
+        const offset = circumference - (percent / 100) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+      }
+      
+      if (progressText) {
+        progressText.textContent = percent + '%';
+      }
+      
+      // Update progress bar
+      const progressBar = document.querySelector('.progress-bar');
+      if (progressBar) {
+        progressBar.style.width = percent + '%';
+        progressBar.setAttribute('aria-valuenow', percent);
+      }
+      
+      // Send AJAX request to update progress
+      fetch('{% url "update_progress" resource.id %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: `percent=${percent}&completed=${completed}`
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error updating progress:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+    
+    // Helper function to get CSRF token
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  });
+</script>
+{% endblock %}

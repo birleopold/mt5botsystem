@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TheAutomata API Docs - ReDoc</title>
+    <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" />
+    <style>
+      body { margin: 0; padding: 0; }
+      .branding-header {
+        text-align: center;
+        margin: 2em 0 1em 0;
+      }
+      .branding-header img {
+        height: 60px;
+        vertical-align: middle;
+      }
+      .branding-header span {
+        font-size: 2em;
+        font-weight: bold;
+        margin-left: 1em;
+        color: #1a233a;
+      }
+      redoc { height: 100vh; }
+    </style>
+  </head>
+  <body>
+    <div class="branding-header">
+      <img src="{% static 'img/logo.png' %}" alt="TheAutomata Logo" />
+      <span>TheAutomata API Docs</span>
+    </div>
+    <redoc spec-url="{% url 'schema-json' %}"></redoc>
+    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
+  </body>
+</html>

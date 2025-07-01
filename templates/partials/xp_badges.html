@@ -1,0 +1,27 @@
+<div class="container">
+  <div style="margin:2em 0 2em 0;">
+    <h3>Your Level & Progress</h3>
+    <div style="display:flex;align-items:center;gap:1.5em;" class="progress-bar">
+      <div style="font-size:2em;font-weight:bold;">Level {{ userlevel.level }}</div>
+      <div style="flex:1;">
+        <div class="progress-bar">
+          <div class="progress-bar-inner" style="width:{{ userlevel.progress_percent }}%;"></div>
+        </div>
+        <div class="streak">XP: {{ userlevel.xp }} / {{ userlevel.xp_for_next_level }} &mdash; Streak: {{ userlevel.streak }} days</div>
+      </div>
+    </div>
+  </div>
+  <h3>Your Badges</h3>
+  {% if badges %}
+    <ul class="badge-list">
+      {% for ub in badges %}
+        <li class="badge-item">
+          {% if ub.badge.icon %}<span class="{{ ub.badge.icon }}" style="font-size:1.4em;"></span>{% endif %}
+          <span><b>{{ ub.badge.name }}</b><br><small>{{ ub.badge.description }}</small></span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No badges yet. Start earning achievements!</p>
+  {% endif %}
+</div>

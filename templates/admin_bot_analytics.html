@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Bot Download Analytics</h2>
+<p>Most popular Expert Advisors (.ex5) downloads by users.</p>
+<table class="table">
+  <tr><th>Bot Name</th><th>Downloads</th></tr>
+  {% for bot in bot_stats %}
+    <tr>
+      <td>{{ bot.name }}</td>
+      <td>{{ bot.count }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}

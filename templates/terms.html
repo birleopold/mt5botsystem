@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 text-center mb-4">
+      <div class="section-divider centered mb-4"></div>
+      <span class="trust-badge"><i class="fas fa-shield-alt me-2"></i>Your Trust & Security is Our Priority</span>
+      <h1 class="display-4 mt-4 mb-2">Terms of Service</h1>
+      <p class="lead text-muted mb-5">Last Updated: May 1, 2025</p>
+    </div>
+  </div>
+  
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-lg mb-5">
+        <div class="card-body p-4 p-md-5">
+          <!-- Table of Contents -->
+          <div class="bg-light p-4 mb-4 rounded">
+            <h4 class="mb-3">Table of Contents</h4>
+            <ol class="mb-0">
+              <li><a href="#acceptance" class="text-primary">Acceptance of Terms</a></li>
+              <li><a href="#account" class="text-primary">Account Responsibilities</a></li>
+              <li><a href="#services" class="text-primary">Services and Subscription</a></li>
+              <li><a href="#payment" class="text-primary">Payment Terms</a></li>
+              <li><a href="#refunds" class="text-primary">Refund Policy</a></li>
+              <li><a href="#liability" class="text-primary">Limitation of Liability</a></li>
+              <li><a href="#changes" class="text-primary">Changes to Terms</a></li>
+              <li><a href="#contact" class="text-primary">Contact Information</a></li>
+            </ol>
+          </div>
+          
+          <!-- Section 1 -->
+          <section id="acceptance" class="mb-5">
+            <h3 class="border-bottom pb-2 mb-3"><i class="fas fa-handshake text-primary me-2"></i>1. Acceptance of Terms</h3>
+            <p>By accessing or using the TheAutomata platform ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our Service.</p>
+            <p>These terms constitute a legally binding agreement between you and TheAutomata regarding your use of the platform and services offered through our website.</p>
+          </section>
+          
+          <!-- Section 2 -->
+          <section id="account" class="mb-5">
+            <h3 class="border-bottom pb-2 mb-3"><i class="fas fa-user-shield text-primary me-2"></i>2. Account Responsibilities</h3>
+            <p>You are responsible for maintaining the security of your account and password. TheAutomata cannot and will not be liable for any loss or damage from your failure to comply with this security obligation.</p>
+            <p>You are responsible for all content posted and activity that occurs under your account. You may not use the Service for any illegal or unauthorized purpose. You must not, in the use of the Service, violate any laws in your jurisdiction.</p>
+          </section>
+          
+          <!-- Section 3 -->
+          <section id="services" class="mb-5">
+            <h3 class="border-bottom pb-2 mb-3"><i class="fas fa-server text-primary me-2"></i>3. Services and Subscription</h3>
+            <p>TheAutomata provides automated trading tools and services for MetaTrader 5 platform users. The specific features and limitations of each subscription plan are outlined on our Plans page.</p>
+            <p>We reserve the right to modify, suspend, or discontinue any part of the Service with or without notice at any time. We shall not be liable to you or any third party for any modification, suspension, or discontinuation of the Service.</p>
+          </section>
+          
+          <!-- Section 4 -->
+          <section id="payment" class="mb-5">
+            <h3 class="border-bottom pb-2 mb-3"><i class="fas fa-credit-card text-primary me-2"></i>4. Payment Terms</h3>
+            <p>Subscription fees are charged in advance on a monthly, quarterly, or annual basis, depending on the billing cycle you select. All payments are processed securely through our payment processors.</p>
+            <p>By subscribing to our Service, you authorize us to charge your payment method for the subscription plan you've chosen. If we are unable to process your payment, we may suspend or terminate your access to the Service.</p>
+          </section>
+          
+          <!-- Section 5 -->
+          <section id="refunds" class="mb-5">
+            <h3 class="border-bottom pb-2 mb-3"><i class="fas fa-undo text-primary me-2"></i>5. Refund Policy</h3>
+            <p>All payments are final unless otherwise stated in our <a href="{% url 'refund' %}" class="text-primary">Refund Policy</a>. Certain conditions may apply for refund eligibility.</p>
+            <p>For questions about our refund policy or to request a refund, please contact our support team.</p>
+          </section>
+          
+          <!-- Section 6 -->
+          <section id="liability" class="mb-5">
+            <h3 class="border-bottom pb-2 mb-3"><i class="fas fa-exclamation-triangle text-primary me-2"></i>6. Limitation of Liability</h3>
+            <p>TheAutomata shall not be liable for any direct, indirect, incidental, special, consequential, or exemplary damages resulting from your use of the Service or any related services.</p>
+            <p>Trading in financial markets involves risk. Our tools are designed to assist with trading automation but do not guarantee profits. You acknowledge that you use our Service at your own risk.</p>
+          </section>
+          
+          <!-- Section 7 -->
+          <section id="changes" class="mb-5">
+            <h3 class="border-bottom pb-2 mb-3"><i class="fas fa-sync-alt text-primary me-2"></i>7. Changes to Terms</h3>
+            <p>We reserve the right to modify these Terms at any time. We will provide notice of significant changes by updating the "Last Updated" date at the top of this page.</p>
+            <p>Your continued use of the Service after such modifications will constitute your acknowledgment of the modified Terms and agreement to abide by them.</p>
+          </section>
+          
+          <!-- Section 8 -->
+          <section id="contact" class="mb-5">
+            <h3 class="border-bottom pb-2 mb-3"><i class="fas fa-envelope text-primary me-2"></i>8. Contact Information</h3>
+            <p>If you have any questions about these Terms, please contact us at:</p>
+            <div class="bg-light p-3 rounded">
+              <p class="mb-1"><strong>Email:</strong> legal@theautomata.com</p>
+              <p class="mb-1"><strong>Address:</strong> 123 Trading Street, Financial District, New York, NY 10001</p>
+              <p class="mb-0"><strong>Support:</strong> <a href="{% url 'contact' %}" class="text-primary">Contact Support</a></p>
+            </div>
+          </section>
+        </div>
+      </div>
+      
+      <!-- Agreement Acknowledgment -->
+      <div class="text-center mb-5">
+        <p class="mb-4">By using our platform, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.</p>
+        <a href="{% url 'home' %}" class="btn btn-primary"><i class="fas fa-home me-2"></i>Return to Home</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

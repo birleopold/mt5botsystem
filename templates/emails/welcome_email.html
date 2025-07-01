@@ -1,0 +1,94 @@
+{% extends "emails/base_email.html" %}
+{% load static %}
+
+{% block title %}Welcome to TheAutomata{% endblock %}
+
+{% block header %}Welcome Aboard!{% endblock %}
+
+{% block content %}
+<h2>Hello {{ user.first_name|default:user.username }},</h2>
+
+<p>Thank you for joining TheAutomata! We're thrilled to have you on board and excited to help you transform your trading experience with our powerful automation tools.</p>
+
+<!-- Account Details Section -->
+<div class="info-box">
+    <h3 style="margin-top: 0; color: var(--primary-color, #3f51b5);">Your Account Details</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 8px 0; width: 40%;"><strong>Username:</strong></td>
+            <td style="padding: 8px 0;">{{ user.username }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0;"><strong>Plan:</strong></td>
+            <td style="padding: 8px 0;"><span style="background-color: var(--primary-color, #3f51b5); color: white; padding: 3px 8px; border-radius: 4px; font-size: 14px;">{{ subscription.plan.name }}</span></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0;"><strong>Valid Until:</strong></td>
+            <td style="padding: 8px 0;">{{ subscription.end_date|date:"F j, Y" }}</td>
+        </tr>
+    </table>
+</div>
+
+<!-- Getting Started Section -->
+<h3 style="margin-top: 30px; color: var(--primary-color, #3f51b5);">Getting Started in 4 Easy Steps</h3>
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+    <tr>
+        <td style="padding: 15px; text-align: center; width: 60px; vertical-align: top;">
+            <div style="background-color: var(--primary-color, #3f51b5); color: white; width: 40px; height: 40px; border-radius: 50%; display: inline-block; text-align: center; line-height: 40px; font-weight: bold;">1</div>
+        </td>
+        <td style="padding: 15px; vertical-align: top;">
+            <h4 style="margin: 0 0 5px 0; color: #2e3b50;">Complete Your Profile</h4>
+            <p style="margin: 0; color: #5d6778;">Add your personal details and preferences to customize your experience.</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 15px; text-align: center; width: 60px; vertical-align: top;">
+            <div style="background-color: var(--primary-color, #3f51b5); color: white; width: 40px; height: 40px; border-radius: 50%; display: inline-block; text-align: center; line-height: 40px; font-weight: bold;">2</div>
+        </td>
+        <td style="padding: 15px; vertical-align: top;">
+            <h4 style="margin: 0 0 5px 0; color: #2e3b50;">Explore Trading Bots</h4>
+            <p style="margin: 0; color: #5d6778;">Browse our collection of pre-configured bots designed for various market conditions.</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 15px; text-align: center; width: 60px; vertical-align: top;">
+            <div style="background-color: var(--primary-color, #3f51b5); color: white; width: 40px; height: 40px; border-radius: 50%; display: inline-block; text-align: center; line-height: 40px; font-weight: bold;">3</div>
+        </td>
+        <td style="padding: 15px; vertical-align: top;">
+            <h4 style="margin: 0 0 5px 0; color: #2e3b50;">Configure Your Strategy</h4>
+            <p style="margin: 0; color: #5d6778;">Set up your first automated trading strategy with our intuitive interface.</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 15px; text-align: center; width: 60px; vertical-align: top;">
+            <div style="background-color: var(--primary-color, #3f51b5); color: white; width: 40px; height: 40px; border-radius: 50%; display: inline-block; text-align: center; line-height: 40px; font-weight: bold;">4</div>
+        </td>
+        <td style="padding: 15px; vertical-align: top;">
+            <h4 style="margin: 0 0 5px 0; color: #2e3b50;">Monitor Performance</h4>
+            <p style="margin: 0; color: #5d6778;">Track your trading performance with our comprehensive analytics dashboard.</p>
+        </td>
+    </tr>
+</table>
+
+<!-- CTA Section -->
+<div style="background-color: #f5f7fa; border-radius: 8px; padding: 25px; text-align: center; margin: 30px 0;">
+    <h3 style="margin-top: 0; color: #2e3b50;">Ready to Start Trading?</h3>
+    <p style="margin-bottom: 20px;">Your dashboard is set up and waiting for you. Click below to begin your automated trading journey.</p>
+    <a href="{{ dashboard_url }}" class="button" style="margin: 0;">Access Your Dashboard</a>
+</div>
+
+<!-- Resources Section -->
+<h3 style="margin-top: 30px; color: var(--primary-color, #3f51b5);">Helpful Resources</h3>
+<ul style="padding-left: 20px; margin-bottom: 25px;">
+    <li style="margin-bottom: 10px;"><a href="#" style="color: var(--primary-color, #3f51b5); text-decoration: none;">Getting Started Guide</a> - A comprehensive walkthrough for new users</li>
+    <li style="margin-bottom: 10px;"><a href="#" style="color: var(--primary-color, #3f51b5); text-decoration: none;">Video Tutorials</a> - Learn how to use our platform effectively</li>
+    <li style="margin-bottom: 10px;"><a href="#" style="color: var(--primary-color, #3f51b5); text-decoration: none;">Trading Strategies</a> - Explore popular trading approaches</li>
+    <li><a href="#" style="color: var(--primary-color, #3f51b5); text-decoration: none;">FAQ</a> - Answers to common questions</li>
+</ul>
+
+<p>If you have any questions or need assistance, our support team is available 24/7 to help you get the most out of your TheAutomata experience.</p>
+
+<p style="margin-top: 30px;">Happy Trading!<br>
+<strong class="bold">The TheAutomata Team</strong></p>
+{% endblock %}

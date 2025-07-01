@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load learning_filters %}
+
+{% block extra_css %}
+<style>
+  .resource-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+  }
+  
+  .resource-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .category-card {
+    transition: transform 0.3s ease;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 100%;
+  }
+  
+  .category-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .progress-ring {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .resource-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 0 0.25rem 0 0.5rem;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .hero-section {
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+    padding: 5rem 0;
+    color: white;
+    margin-bottom: 3rem;
+  }
+  
+  .resource-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-4">Trading Learning Center</h1>
+        <p class="lead mb-4">Enhance your trading skills with our comprehensive learning resources. From beginner guides to advanced strategies, we've got you covered.</p>
+        <div class="d-flex gap-3">
+          <a href="{% url 'my_learning' %}" class="btn btn-light btn-lg">
+            <i class="fas fa-book-reader me-2"></i>My Learning
+          </a>
+          <a href="#categories" class="btn btn-outline-light btn-lg">
+            <i class="fas fa-th-large me-2"></i>Browse Categories
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-6 d-none d-lg-block">
+        <img src="{% static 'img/learning_hero.svg' %}" alt="Learning Center" class="img-fluid" style="max-height: 300px;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+  <!-- Featured Resources -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="mb-4 border-bottom pb-2">Featured Resources</h2>
+    </div>
+    
+    {% if featured_resources %}
+      {% for resource in featured_resources %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card resource-card shadow-sm h-100 position-relative">
+            {% if resource.access_level != 'free' %}
+              <div class="resource-badge bg-warning text-dark">
+                <i class="fas fa-crown me-1"></i>Premium
+              </div>
+            {% endif %}
+            
+            {% if resource.id in user_progress %}
+              <div class="progress-ring">
+                <div class="progress" style="height: 4px;">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: {{ user_progress|get_item:resource.id }}%" aria-valuenow="{{ user_progress|get_item:resource.id }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+            {% endif %}
+            
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="resource-icon bg-{{ resource.resource_type|resource_color }} bg-opacity-10 text-{{ resource.resource_type|resource_color }}">
+                  <i class="fas {{ resource.resource_type|resource_icon }} fa-lg"></i>
+                </div>
+                <div class="ms-3">
+                  <span class="badge bg-secondary">{{ resource.get_resource_type_display }}</span>
+                  <span class="ms-2 text-muted"><i class="far fa-clock me-1"></i>{{ resource.estimated_duration }} min</span>
+                </div>
+              </div>
+              
+              <h5 class="card-title">{{ resource.title }}</h5>
+              <p class="card-text text-muted">{{ resource.description|truncatechars:100 }}</p>
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+              <a href="{{ resource.get_absolute_url }}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-arrow-right me-1"></i>View Resource
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>No featured resources available yet. Check back soon!
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- Categories Section -->
+  <div id="categories" class="row mb-5">
+    <div class="col-12">
+      <h2 class="mb-4 border-bottom pb-2">Learning Categories</h2>
+    </div>
+    
+    {% if categories %}
+      {% for category in categories %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card category-card shadow-sm h-100">
+            <div class="card-body text-center py-4">
+              <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;">
+                <i class="fas {{ category.icon }} fa-2x text-primary"></i>
+              </div>
+              <h3 class="card-title h4 mb-3">{{ category.name }}</h3>
+              <p class="card-text text-muted mb-4">{{ category.description|truncatechars:120 }}</p>
+              <a href="{% url 'learning_category' category.slug %}" class="btn btn-primary">
+                <i class="fas fa-book me-2"></i>Browse Resources
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>No categories available yet. Check back soon!
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- Learning Path Section -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card shadow-sm border-0 bg-light">
+        <div class="card-body p-4">
+          <div class="row align-items-center">
+            <div class="col-lg-8">
+              <h3 class="mb-3">Not sure where to start?</h3>
+              <p class="lead mb-4">Follow our recommended learning path designed for traders at all levels. From basic concepts to advanced strategies, we'll guide you through your trading journey.</p>
+              <a href="{% url 'my_learning' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-route me-2"></i>Start Your Learning Path
+              </a>
+            </div>
+            <div class="col-lg-4 text-center d-none d-lg-block">
+              <img src="{% static 'img/learning_path.svg' %}" alt="Learning Path" class="img-fluid" style="max-height: 200px;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Subscription Upsell -->
+  {% if not user.is_authenticated or not user_subscription %}
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow-sm border-0 bg-primary text-white">
+          <div class="card-body p-4">
+            <div class="row align-items-center">
+              <div class="col-lg-8">
+                <h3 class="mb-3">Unlock Premium Learning Resources</h3>
+                <p class="lead mb-4">Upgrade your subscription to access our premium learning materials, including advanced strategies, expert webinars, and downloadable trading templates.</p>
+                <a href="{% url 'plan_list' %}" class="btn btn-light btn-lg">
+                  <i class="fas fa-crown me-2"></i>View Subscription Plans
+                </a>
+              </div>
+              <div class="col-lg-4 text-center d-none d-lg-block">
+                <img src="{% static 'img/premium_content.svg' %}" alt="Premium Content" class="img-fluid" style="max-height: 200px;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Custom template filter replacements for JavaScript
+  function resourceColor(type) {
+    switch(type) {
+      case 'article': return 'primary';
+      case 'video': return 'danger';
+      case 'pdf': return 'success';
+      case 'course': return 'warning';
+      case 'webinar': return 'info';
+      default: return 'secondary';
+    }
+  }
+  
+  function resourceIcon(type) {
+    switch(type) {
+      case 'article': return 'fa-file-alt';
+      case 'video': return 'fa-video';
+      case 'pdf': return 'fa-file-pdf';
+      case 'course': return 'fa-graduation-cap';
+      case 'webinar': return 'fa-laptop';
+      default: return 'fa-file';
+    }
+  }
+  
+  // Apply these functions to elements
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-resource-type]').forEach(function(el) {
+      const type = el.dataset.resourceType;
+      el.classList.add('bg-' + resourceColor(type) + '-soft');
+      el.classList.add('text-' + resourceColor(type));
+      
+      const iconEl = el.querySelector('i');
+      if (iconEl) {
+        iconEl.className = 'fas ' + resourceIcon(type) + ' fa-lg';
+      }
+    });
+  });
+</script>
+{% endblock %}

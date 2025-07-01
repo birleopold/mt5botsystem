@@ -1,0 +1,443 @@
+/* Professional enhancement styles for MT5 Trading Platform */
+
+/* Typography improvements */
+body {
+  font-size: 17px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--body-bg);
+  color: var(--text-color);
+  line-height: 1.7;
+  margin: 0;
+  padding: 0;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-color);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2.25rem;
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  font-size: 1.8rem;
+  letter-spacing: -0.0125em;
+}
+
+h3 {
+  font-size: 1.5rem;
+  letter-spacing: -0.0125em;
+}
+
+/* Section dividers and testimonial styles - Enhanced */
+.section-divider {
+  height: 4px;
+  width: 80px;
+  background: var(--section-divider);
+  margin: 2rem 0 3rem;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-divider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  100% { left: 100%; }
+}
+
+.section-divider.centered {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.testimonial {
+  background: var(--badge-bg);
+  color: var(--text-color);
+  border-radius: 14px;
+  padding: 1.3em 1.2em;
+  margin: 1em 0;
+  box-shadow: 0 2px 8px rgba(93,108,192,0.07);
+}
+
+.trust-badge {
+  display: inline-block;
+  background: var(--badge-bg);
+  color: var(--trust-green);
+  border-radius: 30px;
+  padding: 0.5em 1.2em;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0.5em 0.5em 1.5em 0.5em;
+  box-shadow: 0 3px 10px rgba(58, 140, 86, 0.15);
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+/* Dashboard widget cards and testimonial styles */
+.widget-card {
+  position: relative;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  background: var(--card-bg);
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  font-size: 1.05rem;
+  overflow: hidden;
+  border: 1px solid rgba(208, 216, 230, 0.1);
+}
+
+.widget-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.widget-card .widget-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.widget-card .widget-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.widget-card .widget-content {
+  padding: 1.25rem 0;
+  font-size: 1.05rem;
+}
+
+.widget-card .widget-footer {
+  padding: 0.75rem 1.25rem;
+  background-color: rgba(var(--primary-color-rgb), 0.03);
+  border-top: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+/* Stats cards grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  padding: 1.25rem;
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.stat-card .stat-title {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.stat-card .stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  line-height: 1;
+}
+
+.stat-card .stat-change {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+}
+
+.stat-card .stat-change.positive {
+  color: var(--success-color);
+}
+
+.stat-card .stat-change.negative {
+  color: var(--danger-color);
+}
+
+.stat-card .stat-icon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  opacity: 0.15;
+}
+
+/* Accent stat cards */
+.stat-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+}
+
+.stat-primary .stat-title,
+.stat-primary .stat-value,
+.stat-primary .stat-change {
+  color: white;
+}
+
+.stat-accent-1 {
+  background: linear-gradient(135deg, var(--accent-1), rgba(var(--accent-1-rgb), 0.7));
+  color: white;
+}
+
+.stat-accent-1 .stat-title,
+.stat-accent-1 .stat-value,
+.stat-accent-1 .stat-change {
+  color: white;
+}
+
+.stat-accent-2 {
+  background: linear-gradient(135deg, var(--accent-2), rgba(var(--accent-2-rgb), 0.8));
+  color: var(--text-color);
+}
+
+.stat-accent-3 {
+  background: linear-gradient(135deg, var(--accent-3), rgba(var(--accent-3-rgb), 0.8));
+  color: white;
+}
+
+.stat-accent-3 .stat-title,
+.stat-accent-3 .stat-value,
+.stat-accent-3 .stat-change {
+  color: white;
+}
+
+.stat-accent-4 {
+  background: linear-gradient(135deg, var(--accent-4), rgba(var(--accent-4-rgb), 0.8));
+  color: var(--text-color);
+}
+
+.stat-accent-5 {
+  background: linear-gradient(135deg, var(--accent-5), rgba(var(--accent-5-rgb), 0.8));
+  color: white;
+}
+
+.stat-accent-5 .stat-title,
+.stat-accent-5 .stat-value,
+.stat-accent-5 .stat-change {
+  color: white;
+}
+
+/* Table enhancements */
+.table-professional {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.table-professional thead th {
+  background-color: rgba(var(--primary-color-rgb), 0.05);
+  color: var(--text-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table-professional tbody tr {
+  transition: var(--transition);
+}
+
+.table-professional tbody tr:hover {
+  background-color: rgba(var(--primary-color-rgb), 0.02);
+}
+
+.table-professional tbody td {
+  padding: 0.75rem 1.25rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table-professional tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Progress bars */
+.progress-container {
+  margin-bottom: 1.5rem;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.progress {
+  height: 8px;
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.progress-primary {
+  background-color: var(--primary-color);
+}
+
+.progress-success {
+  background-color: var(--success-color);
+}
+
+.progress-accent-1 {
+  background-color: var(--accent-1);
+}
+
+.progress-accent-2 {
+  background-color: var(--accent-2);
+}
+
+.progress-accent-3 {
+  background-color: var(--accent-3);
+}
+
+.progress-accent-4 {
+  background-color: var(--accent-4);
+}
+
+.progress-accent-5 {
+  background-color: var(--accent-5);
+}
+
+/* Badge enhancements */
+.badge-professional {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 50rem;
+  transition: var(--transition);
+}
+
+.badge-subtle-primary {
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  color: var(--primary-color);
+}
+
+.badge-subtle-success {
+  background-color: rgba(var(--success-color-rgb), 0.1);
+  color: var(--success-color);
+}
+
+.badge-subtle-danger {
+  background-color: rgba(var(--danger-color-rgb), 0.1);
+  color: var(--danger-color);
+}
+
+.badge-subtle-warning {
+  background-color: rgba(var(--warning-color-rgb), 0.1);
+  color: var(--warning-color);
+}
+
+.badge-subtle-info {
+  background-color: rgba(var(--accent-1-rgb), 0.1);
+  color: var(--accent-1);
+}
+
+/* Info boxes with icons */
+.info-box {
+  position: relative;
+  padding: 1.25rem 1.25rem 1.25rem 3.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--card-shadow);
+}
+
+.info-box-icon {
+  position: absolute;
+  left: 1.25rem;
+  top: 1.25rem;
+  font-size: 1.5rem;
+  opacity: 0.8;
+}
+
+.info-box-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.info-box-success {
+  background-color: rgba(var(--success-color-rgb), 0.05);
+  border-left: 4px solid var(--success-color);
+}
+
+.info-box-success .info-box-icon,
+.info-box-success .info-box-title {
+  color: var(--success-color);
+}
+
+.info-box-warning {
+  background-color: rgba(var(--warning-color-rgb), 0.05);
+  border-left: 4px solid var(--warning-color);
+}
+
+.info-box-warning .info-box-icon,
+.info-box-warning .info-box-title {
+  color: var(--warning-color);
+}
+
+.info-box-danger {
+  background-color: rgba(var(--danger-color-rgb), 0.05);
+  border-left: 4px solid var(--danger-color);
+}
+
+.info-box-danger .info-box-icon,
+.info-box-danger .info-box-title {
+  color: var(--danger-color);
+}
+
+.info-box-info {
+  background-color: rgba(var(--accent-1-rgb), 0.05);
+  border-left: 4px solid var(--accent-1);
+}
+
+.info-box-info .info-box-icon,
+.info-box-info .info-box-title {
+  color: var(--accent-1);
+}

@@ -1,0 +1,537 @@
+/* Dashboard specific styles for unified theme */
+
+/* Ensure navbar consistency across all pages */
+/* These styles are now handled in components.css */
+
+/* Onboarding modal */
+#onboarding-modal .modal-content {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  box-shadow: 0 4px 24px var(--shadow-color);
+}
+
+/* Dashboard action buttons */
+.dashboard-btn {
+  padding: 0.7em 2em;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s ease;
+  color: var(--btn-text);
+}
+
+.dashboard-btn.primary {
+  background-color: var(--primary-color);
+}
+
+.dashboard-btn.success {
+  background-color: var(--success-color);
+}
+
+.dashboard-btn.warning {
+  background-color: var(--warning-color);
+  color: #212529;
+}
+
+.dashboard-btn:hover {
+  filter: brightness(90%);
+}
+
+/* Status badges */
+.status-badge {
+  padding: 0.3em 1em;
+  border-radius: 20px;
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.status-badge.active {
+  background-color: var(--success-color);
+  color: var(--btn-text);
+}
+
+.status-badge.inactive {
+  background-color: var(--danger-color);
+  color: var(--btn-text);
+}
+
+.status-badge.expiring {
+  background-color: var(--warning-color);
+  color: #212529;
+}
+
+/* Tables */
+.dashboard-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1.5em;
+}
+
+.dashboard-table th, 
+.dashboard-table td {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+}
+
+.dashboard-table th {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.dashboard-table tr:nth-child(even) {
+  background-color: var(--card-bg);
+}
+
+.dashboard-table tr:nth-child(odd) {
+  background-color: var(--body-bg);
+}
+
+/* Alert boxes */
+.dashboard-alert {
+  padding: 1.2em;
+  border-radius: 7px;
+  margin: 1.5em 0;
+}
+
+.dashboard-alert.warning {
+  background-color: var(--warning-color);
+  color: #212529;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.dashboard-alert.danger {
+  background-color: var(--danger-color);
+  color: var(--btn-text);
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.dashboard-alert.info {
+  background-color: var(--info-color);
+  color: var(--btn-text);
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Chart adjustments */
+.chart-container {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  padding: 15px;
+  margin: 1em 0;
+  border: 1px solid var(--border-color);
+}
+
+/* Form elements */
+.dashboard-select, 
+.dashboard-input {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--input-border);
+  padding: 0.4em 0.8em;
+  border-radius: 4px;
+}
+
+.dashboard-select option {
+  background-color: var(--dropdown-bg);
+  color: var(--dropdown-text);
+}
+
+/* Button styles */
+.request-btn, 
+.revoke-btn {
+  border: none;
+  padding: 0.4em 1em;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.request-btn {
+  background-color: var(--primary-color);
+  color: var(--btn-text);
+}
+
+.revoke-btn {
+  background-color: var(--danger-color);
+  color: var(--btn-text);
+}
+
+.request-btn:hover, 
+.revoke-btn:hover {
+  filter: brightness(90%);
+}
+
+/* Referral input */
+.referral-input {
+  width: 90%;
+  font-size: 1em;
+  padding: 0.5em;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+}
+
+/* Reward history */
+.reward-history table {
+  margin: 0 auto;
+  min-width: 320px;
+  border-collapse: collapse;
+}
+
+.reward-history th,
+.reward-history td {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+}
+
+.reward-history th {
+  background-color: var(--input-bg);
+}
+
+/* Chart.js styling */
+.chart-container {
+  background: linear-gradient(135deg, rgba(var(--accent-2-rgb), 0.1), rgba(var(--accent-1-rgb), 0.05));
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+}
+
+/* Chart heading */
+.chart-title {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+/* Chart legends */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+/* Different chart types */
+.line-chart-container {
+  background: linear-gradient(135deg, rgba(var(--accent-2-rgb), 0.1), rgba(var(--accent-1-rgb), 0.05));
+}
+
+.bar-chart-container {
+  background: linear-gradient(135deg, rgba(var(--accent-3-rgb), 0.08), rgba(var(--accent-1-rgb), 0.03));
+}
+
+.pie-chart-container {
+  background: linear-gradient(135deg, rgba(var(--accent-4-rgb), 0.08), rgba(var(--accent-5-rgb), 0.03));
+}
+
+/* Dashboard section layout */
+.dashboard-section {
+  margin: 2em 0 2em 0;
+}
+
+/* Form styling */
+form {
+  margin-bottom: 1.5em;
+}
+
+form button {
+  margin-left: 1em;
+}
+
+form.inline {
+  display: inline;
+}
+
+/* License key styling */
+span[id^="lic-"] {
+  font-family: monospace;
+  background-color: var(--input-bg);
+  padding: 0.2em 0.5em;
+  border-radius: 3px;
+  border: 1px solid var(--border-color);
+}
+
+/* Badge styling */
+.badge {
+  display: inline-block;
+  margin-left: 0.5em;
+  padding: 0.2em 0.6em;
+  border-radius: 3px;
+  font-size: 0.95em;
+}
+
+.badge-active {
+  background-color: var(--success-color);
+  color: var(--btn-text);
+}
+
+.badge-inactive, .badge-revoked {
+  background-color: var(--danger-color);
+  color: var(--btn-text);
+}
+
+.badge-expired {
+  background-color: var(--warning-color);
+  color: #212529;
+}
+
+/* Payment status indicators */
+.paid-status {
+  background-color: var(--success-color);
+  color: var(--btn-text);
+  padding: 0.2em 0.8em;
+  border-radius: 3px;
+}
+
+.unpaid-status {
+  background-color: var(--danger-color);
+  color: var(--btn-text);
+  padding: 0.2em 0.8em;
+  border-radius: 3px;
+}
+
+/* EA list styles */
+.no-license, .no-end, .expired {
+  color: var(--text-muted);
+}
+
+.expired {
+  color: var(--warning-color);
+  font-weight: bold;
+}
+
+/* Alert boxes for no content */
+.no-payment-history, .no-eas {
+  background-color: var(--danger-color);
+  color: var(--btn-text);
+  padding: 1.2em;
+  border-radius: 7px;
+  margin: 1.5em 0;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Download all EAs section */
+.download-all-eas {
+  margin: 1.5em 0 0.5em 0;
+}
+
+.download-all-eas .dashboard-input {
+  margin-left: 1em;
+}
+
+/* Social sharing section */
+.section-title {
+  color: var(--primary-color);
+}
+
+.copy-btn {
+  background: none;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 0.4em 0.8em;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+  background-color: var(--primary-color);
+  color: var(--btn-text);
+}
+
+.social-btn {
+  padding: 0.4em 0.8em;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1em;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.social-btn:hover {
+  filter: brightness(90%);
+  color: white;
+  text-decoration: none;
+}
+
+.social-btn.twitter {
+  background: #1DA1F2;
+}
+
+.social-btn.facebook {
+  background: #4267B2;
+}
+
+.social-btn.linkedin {
+  background: #0e76a8;
+}
+
+.custom-message {
+  width: 100%;
+  padding: 0.4em;
+  display: none;
+  margin-top: 0.5em;
+}
+
+/* Table styling */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1.5em;
+  border: 1px solid var(--border-color);
+}
+
+th, td {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+}
+
+th {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+tr:nth-child(even) {
+  background-color: var(--card-bg);
+}
+
+tr:nth-child(odd) {
+  background-color: var(--body-bg);
+}
+
+/* EA file list */
+ul {
+  margin: 0;
+  padding-left: 1em;
+  max-height: 120px;
+  overflow: auto;
+}
+
+li {
+  margin-bottom: 0.3em;
+}
+
+li a {
+  color: var(--primary-color);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+li span {
+  background: rgba(var(--primary-color-rgb), 0.1);
+  color: var(--primary-color);
+  border-radius: 3px;
+  padding: 0 0.3em;
+  margin-left: 0.3em;
+  font-size: 0.95em;
+}
+
+li span[title] {
+  font-size: 0.92em;
+  color: var(--text-muted);
+}
+
+/* Support ticket section */
+.ticket-list {
+  list-style: none;
+  padding: 0;
+}
+
+.ticket-item {
+  border-bottom: 1px solid var(--border-color);
+  padding: 10px 0;
+}
+
+.ticket-subject {
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.ticket-status {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.ticket-date {
+  color: var(--text-muted);
+  font-size: 0.9em;
+}
+
+.ticket-message {
+  margin-top: 5px;
+}
+
+.ticket-response {
+  margin-top: 5px;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+/* Specific onboarding modal styling */
+#onboarding-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+#onboarding-modal > div {
+  background: var(--card-bg);
+  padding: 2em 2em 1em 2em;
+  border-radius: 10px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 24px var(--shadow-color);
+  color: var(--text-color);
+}
+
+#onboarding-steps {
+  text-align: left;
+  margin: 1em 0 1em 1em;
+  padding: 0 0 0 1em;
+  color: var(--text-color);
+}
+
+#onboarding-next {
+  background: var(--primary-color);
+  color: var(--btn-text);
+  padding: 0.7em 2em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#onboarding-next:hover {
+  filter: brightness(90%);
+}

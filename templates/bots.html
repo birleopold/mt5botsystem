@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="section-divider centered"></div>
+  <span class="trust-badge">Curated & Secure Trading Bots</span>
+  <h2 class="text-center" style="margin-top:1.2em;">MQL5 Bot Library (.ex5)</h2>
+  <p class="text-center">Browse and download compiled trading bots for MetaTrader 5 (.ex5 files).<br>Click a bot to see its details and available versions.</p>
+  {% if messages %}
+    <ul style="max-width:600px;margin:1em auto 2em auto;">
+      {% for message in messages %}
+        <li class="alert" style="background:var(--success-color,#e7f9ee);color:var(--text-color,#2e3b50);padding:0.7em 1em;border-radius:6px;margin-bottom:0.7em;">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% if bots %}
+    <div style="overflow-x:auto;max-width:900px;margin:2em auto;">
+      <table class="dashboard-table" style="width:100%;">
+        <tr><th>Name</th><th>Description</th><th>Files</th></tr>
+        {% for bot in bots %}
+          <tr>
+            <td style="font-weight:bold;">{{ bot.name }}{% if bot.is_premium %} <span title="Premium Bot" style="color:#e53935;font-size:1.2em;">&#128274;</span>{% endif %}</td>
+            <td>{{ bot.description|default:'No description provided.' }}</td>
+            <td>
+              {% if bot.files.all %}
+                <ul style="margin:0;padding-left:1.2em;">
+                  {% for f in bot.files.all %}
+                    <li style="margin-bottom:0.3em;">
+                      <span style="font-size:0.97em;">v{{ f.version }}</span>
+                      {% if f.changelog %}<span title="Changelog">📝</span>{% endif %}
+                      <a href="{% url 'download_bot' f.id %}" class="dashboard-btn primary" style="font-size:0.97em;padding:0.2em 1em;margin-left:0.5em;">Download</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <span style="color:#888;">No files available</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% else %}
+    <div class="alert" style="max-width:600px;margin:2em auto;background:var(--warning-color,#fffbe7);color:var(--text-color,#2e3b50);padding:0.7em 1em;border-radius:6px;">No bots are currently available. Please check back soon!</div>
+  {% endif %}
+{% endblock %}

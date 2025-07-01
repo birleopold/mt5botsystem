@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Trade History Details{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .filter-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .profit-positive {
+        color: #28a745;
+    }
+    .profit-negative {
+        color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Trade History</h1>
+        <a href="{% url 'trading_dashboard' %}" class="btn btn-outline-primary">Back to Dashboard</a>
+    </div>
+    
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="symbol" class="form-label">Symbol</label>
+                <select name="symbol" id="symbol" class="form-select">
+                    <option value="">All Symbols</option>
+                    {% for symbol_item in symbols %}
+                    <option value="{{ symbol_item }}" {% if applied_filters.symbol == symbol_item %}selected{% endif %}>{{ symbol_item }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="strategy" class="form-label">Strategy</label>
+                <select name="strategy" id="strategy" class="form-select">
+                    <option value="">All Strategies</option>
+                    {% for strategy_item in strategies %}
+                    <option value="{{ strategy_item }}" {% if applied_filters.strategy == strategy_item %}selected{% endif %}>{{ strategy_item }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="result" class="form-label">Result</label>
+                <select name="result" id="result" class="form-select">
+                    <option value="">All Results</option>
+                    <option value="win" {% if applied_filters.result == 'win' %}selected{% endif %}>Profitable</option>
+                    <option value="loss" {% if applied_filters.result == 'loss' %}selected{% endif %}>Loss</option>
+                </select>
+            </div>
+            
+            <div class="col-md-2">
+                <label for="days" class="form-label">Period</label>
+                <select name="days" id="days" class="form-select">
+                    <option value="7" {% if applied_filters.days == 7 %}selected{% endif %}>Last 7 days</option>
+                    <option value="30" {% if applied_filters.days == 30 %}selected{% endif %}>Last 30 days</option>
+                    <option value="90" {% if applied_filters.days == 90 %}selected{% endif %}>Last 90 days</option>
+                    <option value="365" {% if applied_filters.days == 365 %}selected{% endif %}>Last year</option>
+                    <option value="0" {% if applied_filters.days == 0 %}selected{% endif %}>All time</option>
+                </select>
+            </div>
+            
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Trades Table -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title m-0">Trade History</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Type</th>
+                            <th>Strategy</th>
+                            <th>Open Time</th>
+                            <th>Close Time</th>
+                            <th>Open Price</th>
+                            <th>Close Price</th>
+                            <th>Lot Size</th>
+                            <th>Profit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trade in trades %}
+                        <tr>
+                            <td>{{ trade.symbol }}</td>
+                            <td>{{ trade.trade_type }}</td>
+                            <td>{{ trade.strategy }}</td>
+                            <td>{{ trade.open_time|date:"Y-m-d H:i" }}</td>
+                            <td>{{ trade.close_time|date:"Y-m-d H:i" }}</td>
+                            <td>{{ trade.open_price }}</td>
+                            <td>{{ trade.close_price }}</td>
+                            <td>{{ trade.lot_size }}</td>
+                            <td class="{% if trade.profit >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                                {{ trade.profit|floatformat:2 }}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center">No trades found matching your filters</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

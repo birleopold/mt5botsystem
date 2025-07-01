@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 text-center mb-4">
+      <div class="section-divider centered mb-4"></div>
+      <span class="trust-badge"><i class="fas fa-receipt me-2"></i>Secure Payment Verification</span>
+      <h1 class="display-4 mt-4 mb-2">Manual Payment Confirmation</h1>
+      <p class="lead text-muted mb-5">Please provide your payment details for verification</p>
+    </div>
+  </div>
+  
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-lg mb-4">
+        <div class="card-header bg-primary text-white py-3">
+          <h3 class="mb-0"><i class="fas fa-file-invoice-dollar me-2"></i>Payment Details for {{ plan.name }} Plan</h3>
+        </div>
+        <div class="card-body p-4">
+          <!-- Order Summary -->
+          <div class="bg-light p-3 rounded mb-4">
+            <div class="row align-items-center">
+              <div class="col-md-8">
+                <h5 class="mb-1">{{ plan.name }} Plan</h5>
+                <p class="text-muted mb-0">{{ plan.description|default:"Premium trading features and support" }}</p>
+              </div>
+              <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <h4 class="text-primary mb-0">${{ plan.price }}</h4>
+                <span class="badge bg-secondary">{{ plan.billing_cycle|default:"Monthly" }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Payment Instructions -->
+          <div class="alert alert-info mb-4">
+            <h5 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Payment Instructions</h5>
+            <p>Please follow these steps to complete your manual payment:</p>
+            <ol class="mb-0">
+              <li>Make your payment using one of the accepted methods below</li>
+              <li>Take a screenshot or photo of your payment receipt/confirmation</li>
+              <li>Upload the proof of payment using the form below</li>
+              <li>Include any reference numbers or transaction IDs in the notes</li>
+              <li>Submit your payment proof for verification</li>
+            </ol>
+          </div>
+          
+          <!-- Payment Methods -->
+          <div class="mb-4">
+            <h5><i class="fas fa-credit-card me-2 text-primary"></i>Accepted Payment Methods</h5>
+            <div class="row mt-3">
+              <div class="col-md-4 mb-3">
+                <div class="border rounded p-3 text-center h-100">
+                  <i class="fas fa-money-bill-wave fa-2x text-success mb-2"></i>
+                  <h6>Cash Payment</h6>
+                  <p class="small text-muted mb-0">In-person at our office</p>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="border rounded p-3 text-center h-100">
+                  <i class="fas fa-university fa-2x text-primary mb-2"></i>
+                  <h6>Bank Transfer</h6>
+                  <p class="small text-muted mb-0">To our company account</p>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="border rounded p-3 text-center h-100">
+                  <i class="fas fa-mobile-alt fa-2x text-info mb-2"></i>
+                  <h6>Mobile Payment</h6>
+                  <p class="small text-muted mb-0">Via supported apps</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Payment Form -->
+          <form method="post" enctype="multipart/form-data" class="needs-validation">
+            {% csrf_token %}
+            
+            <h5 class="mb-3"><i class="fas fa-upload me-2 text-primary"></i>Upload Payment Proof</h5>
+            
+            <!-- Payment Method Selection -->
+            <div class="form-group mb-3">
+              <label for="id_payment_method" class="form-label">Payment Method Used</label>
+              <select class="form-select" id="id_payment_method" name="payment_method" required>
+                <option value="" selected disabled>Select payment method</option>
+                <option value="cash">Cash Payment</option>
+                <option value="bank_transfer">Bank Transfer</option>
+                <option value="mobile_payment">Mobile Payment</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            
+            <!-- Transaction ID -->
+            <div class="form-group mb-3">
+              <label for="id_transaction_id" class="form-label">Transaction ID/Reference Number</label>
+              <input type="text" class="form-control" id="id_transaction_id" name="transaction_id" placeholder="Enter reference number if available">
+            </div>
+            
+            <!-- Payment Amount -->
+            <div class="form-group mb-3">
+              <label for="id_amount" class="form-label">Payment Amount</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control" id="id_amount" name="amount" value="{{ plan.price }}" required>
+              </div>
+            </div>
+            
+            <!-- Payment Date -->
+            <div class="form-group mb-3">
+              <label for="id_payment_date" class="form-label">Payment Date</label>
+              <input type="date" class="form-control" id="id_payment_date" name="payment_date" required>
+            </div>
+            
+            <!-- Payment Proof Upload -->
+            <div class="form-group mb-3">
+              <label for="id_payment_proof" class="form-label">Payment Proof (Screenshot/Photo)</label>
+              <input type="file" class="form-control" id="id_payment_proof" name="payment_proof" accept="image/*,.pdf" required>
+              <div class="form-text">Accepted formats: JPG, PNG, PDF (Max size: 5MB)</div>
+            </div>
+            
+            <!-- Additional Notes -->
+            <div class="form-group mb-4">
+              <label for="id_notes" class="form-label">Additional Notes</label>
+              <textarea class="form-control" id="id_notes" name="notes" rows="3" placeholder="Any additional information about your payment"></textarea>
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-paper-plane me-2"></i>Submit Payment Proof</button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer bg-light py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="{% url 'checkout' plan.id %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back to Checkout</a>
+            <div class="security-badges">
+              <i class="fas fa-shield-alt text-success me-1"></i> <span class="text-muted">Secure Verification</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Verification Process -->
+      <div class="card shadow-lg">
+        <div class="card-header bg-light py-3">
+          <h4 class="mb-0"><i class="fas fa-clipboard-check me-2 text-primary"></i>Verification Process</h4>
+        </div>
+        <div class="card-body p-4">
+          <div class="row">
+            <div class="col-md-4 text-center mb-4 mb-md-0">
+              <div class="p-3">
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                  <span class="fw-bold">1</span>
+                </div>
+                <h5>Submit Proof</h5>
+                <p class="text-muted small">Upload your payment confirmation</p>
+              </div>
+            </div>
+            <div class="col-md-4 text-center mb-4 mb-md-0">
+              <div class="p-3">
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                  <span class="fw-bold">2</span>
+                </div>
+                <h5>Verification</h5>
+                <p class="text-muted small">Our team reviews your payment</p>
+              </div>
+            </div>
+            <div class="col-md-4 text-center">
+              <div class="p-3">
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                  <span class="fw-bold">3</span>
+                </div>
+                <h5>Activation</h5>
+                <p class="text-muted small">Your subscription is activated</p>
+              </div>
+            </div>
+          </div>
+          <div class="alert alert-success mt-3 mb-0">
+            <i class="fas fa-info-circle me-2"></i> After submitting, your payment will be reviewed and confirmed by our team within 24 hours. You'll receive an email notification once your subscription is activated.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

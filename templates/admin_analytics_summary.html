@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/charts.js' %}"></script>
+{% block content %}
+<h2>Admin Analytics Summary</h2>
+<div>
+  <b>Total Users:</b> {{ user_count }}<br>
+  <b>Active Users (7d):</b> {{ active_users }}
+</div>
+<div>
+  <h3>Top Referrers</h3>
+  <table><tr><th>User</th><th>Referrals</th></tr>
+    {% for ref in top_referrers %}
+      <tr><td>{{ ref.referrer__username }}</td><td>{{ ref.total }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+<div>
+  <h3>Most Awarded Badges</h3>
+  <table><tr><th>Badge</th><th>Count</th></tr>
+    {% for badge in badge_counts %}
+      <tr><td>{{ badge.badge__name }}</td><td>{{ badge.count }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+<div>
+  <h3>User Level Distribution</h3>
+  <canvas id="levelChart" height="80"></canvas>
+</div>
+<script>
+(function() {
+  var ctx = document.getElementById('levelChart').getContext('2d');
+  var data = [ {% for lvl in level_dist reversed %}{{ lvl.count }},{% endfor %} ];
+  var labels = [ {% for lvl in level_dist reversed %}'Level {{ lvl.level }}',{% endfor %} ];
+  renderLineChart(ctx, data, labels, 'Users per Level');
+})();
+</script>
+{% endblock %}

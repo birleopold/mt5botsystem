@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}TheAutomata Notification{% endblock %}</title>
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2e3b50;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Layout */
+        .email-wrapper {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Header */
+        .header {
+            background-color: var(--primary-color, #3f51b5);
+            background-image: linear-gradient(135deg, var(--primary-color, #3f51b5) 0%, var(--secondary-color, #2196f3) 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 10px 0 0;
+            font-weight: 600;
+            font-size: 24px;
+            letter-spacing: 0.5px;
+        }
+        .logo {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        
+        /* Content */
+        .content {
+            padding: 30px;
+            color: #2e3b50;
+        }
+        .content h2 {
+            color: #2e3b50;
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .content p {
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        /* Buttons */
+        .button {
+            display: inline-block;
+            background-color: var(--primary-color, #3f51b5);
+            color: white !important;
+            padding: 12px 24px;
+            margin: 20px 0;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: var(--primary-dark, #303f9f);
+        }
+        
+        /* Info Box */
+        .info-box {
+            background-color: #f0f7ff;
+            border-left: 4px solid var(--primary-color, #3f51b5);
+            padding: 15px;
+            margin: 25px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        /* Divider */
+        .divider {
+            height: 1px;
+            background-color: #eaedf3;
+            margin: 25px 0;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #f9fafc;
+            font-size: 14px;
+            color: #8795a1;
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #eaedf3;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .footer a {
+            color: var(--primary-color, #3f51b5);
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .social-links {
+            margin: 15px 0;
+        }
+        .social-link {
+            display: inline-block;
+            margin: 0 8px;
+            color: #8795a1;
+            font-size: 20px;
+            text-decoration: none;
+        }
+        
+        /* Responsive */
+        @media only screen and (max-width: 620px) {
+            .container {
+                width: 100% !important;
+            }
+            .content {
+                padding: 20px !important;
+            }
+            .button {
+                display: block;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-wrapper">
+        <div class="container">
+            <div class="header">
+                <img src="{{ logo_url }}" alt="TheAutomata Logo" class="logo">
+                <h1>{% block header %}TheAutomata{% endblock %}</h1>
+            </div>
+            
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+            
+            <div class="footer">
+                <div class="social-links">
+                    <a href="#" class="social-link">F</a>
+                    <a href="#" class="social-link">T</a>
+                    <a href="#" class="social-link">L</a>
+                    <a href="#" class="social-link">Y</a>
+                </div>
+                <p>© {% now "Y" %} TheAutomata. All rights reserved.</p>
+                <p>If you have any questions, please contact our <a href="{{ support_url }}">support team</a>.</p>
+                <div class="divider"></div>
+                <p>
+                    <small>This email was sent to {{ user.email }}. 
+                    If you prefer not to receive these emails, you can 
+                    <a href="{{ unsubscribe_url }}">unsubscribe</a>.</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

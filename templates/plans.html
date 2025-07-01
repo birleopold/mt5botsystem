@@ -1,0 +1,428 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 text-center mb-4">
+      <div class="section-divider centered mb-4"></div>
+      <span class="trust-badge"><i class="fas fa-shield-alt me-2"></i>Secure Payment & Satisfaction Guarantee</span>
+      <h1 class="display-4 mt-4 mb-2">Choose Your Trading Plan</h1>
+      <p class="lead text-muted mb-5">Select the plan that best fits your trading needs and budget</p>
+    </div>
+  </div>
+  
+  <!-- Plan Comparison Toggle -->
+  <div class="row justify-content-center mb-5">
+    <div class="col-md-6 text-center">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body py-3">
+          <div class="d-flex justify-content-center align-items-center">
+            <span class="me-3">Monthly</span>
+            <div class="form-check form-switch d-inline-block">
+              <input class="form-check-input" type="checkbox" id="billingToggle" style="width: 3rem; height: 1.5rem;">
+              <label class="form-check-label" for="billingToggle"></label>
+            </div>
+            <span class="ms-3">Annual <span class="badge bg-success ms-1">Save 20%</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Plans Row -->
+  <div class="row justify-content-center">
+    {% for plan in plans %}
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card h-100 plan-card shadow-lg border-0 {% if plan.name == 'Pro' %}popular-plan{% endif %}" data-plan-id="{{ plan.id }}">
+        {% if plan.name == 'Pro' %}
+        <div class="ribbon ribbon-top-right"><span>POPULAR</span></div>
+        {% endif %}
+        <div class="card-header text-center py-4 {% if plan.name == 'Pro' %}bg-primary text-white{% elif plan.name == 'Premium' %}bg-dark text-white{% else %}bg-light{% endif %}">
+          <h3 class="my-0 fw-normal">{{ plan.name }}</h3>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <div class="text-center mb-4">
+            <div class="display-4 mb-2">
+              <span class="currency">$</span>
+              <span class="price-monthly">{{ plan.price }}</span>
+              <span class="price-annually" style="display: none;">{{ plan.price|floatformat:0|add:"-20"|floatformat:0 }}</span>
+            </div>
+            <span class="text-muted billing-period-text">per month</span>
+          </div>
+          
+          <div class="plan-description mb-4 text-center">
+            <p>{{ plan.description }}</p>
+          </div>
+          
+          <ul class="list-unstyled mt-3 mb-4">
+            {% if plan.name == 'Basic' %}
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Access to basic trading bots</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Standard support</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>1 MT5 account</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Basic analytics</li>
+            <li class="mb-3"><i class="fas fa-times-circle text-danger me-2"></i>Advanced strategies</li>
+            <li class="mb-3"><i class="fas fa-times-circle text-danger me-2"></i>Priority support</li>
+            {% elif plan.name == 'Pro' %}
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Access to all trading bots</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Priority support</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Up to 3 MT5 accounts</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Advanced analytics</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Advanced strategies</li>
+            <li class="mb-3"><i class="fas fa-times-circle text-danger me-2"></i>Custom bot development</li>
+            {% elif plan.name == 'Premium' %}
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Access to all trading bots</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>24/7 VIP support</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Unlimited MT5 accounts</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Premium analytics</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Advanced strategies</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Custom bot development</li>
+            {% endif %}
+          </ul>
+          
+          <div class="mt-auto text-center">
+            <a href="{% url 'checkout' plan.id %}" class="btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% elif plan.name == 'Premium' %}btn-dark{% else %}btn-outline-primary{% endif %} w-100">
+              Select {{ plan.name }}
+            </a>
+          </div>
+        </div>
+        <div class="card-footer bg-transparent py-3 text-center">
+          <small class="text-muted">No credit card required for trial</small>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  
+  <!-- Features Comparison -->
+  <div class="row justify-content-center mt-5">
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-light py-3">
+          <h3 class="mb-0 text-center"><i class="fas fa-table text-primary me-2"></i>Plan Features Comparison</h3>
+        </div>
+        <div class="card-body p-4">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th style="width: 30%">Feature</th>
+                  <th class="text-center">Basic</th>
+                  <th class="text-center bg-light">Pro</th>
+                  <th class="text-center">Premium</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Trading Bots</td>
+                  <td class="text-center">Basic Only</td>
+                  <td class="text-center bg-light">All Bots</td>
+                  <td class="text-center">All Bots + Custom</td>
+                </tr>
+                <tr>
+                  <td>MT5 Accounts</td>
+                  <td class="text-center">1</td>
+                  <td class="text-center bg-light">3</td>
+                  <td class="text-center">Unlimited</td>
+                </tr>
+                <tr>
+                  <td>Support</td>
+                  <td class="text-center">Standard</td>
+                  <td class="text-center bg-light">Priority</td>
+                  <td class="text-center">24/7 VIP</td>
+                </tr>
+                <tr>
+                  <td>Analytics</td>
+                  <td class="text-center">Basic</td>
+                  <td class="text-center bg-light">Advanced</td>
+                  <td class="text-center">Premium</td>
+                </tr>
+                <tr>
+                  <td>Strategy Templates</td>
+                  <td class="text-center">5</td>
+                  <td class="text-center bg-light">20</td>
+                  <td class="text-center">Unlimited</td>
+                </tr>
+                <tr>
+                  <td>Backtesting</td>
+                  <td class="text-center"><i class="fas fa-check-circle text-success"></i></td>
+                  <td class="text-center bg-light"><i class="fas fa-check-circle text-success"></i></td>
+                  <td class="text-center"><i class="fas fa-check-circle text-success"></i></td>
+                </tr>
+                <tr>
+                  <td>Real-time Alerts</td>
+                  <td class="text-center"><i class="fas fa-times-circle text-danger"></i></td>
+                  <td class="text-center bg-light"><i class="fas fa-check-circle text-success"></i></td>
+                  <td class="text-center"><i class="fas fa-check-circle text-success"></i></td>
+                </tr>
+                <tr>
+                  <td>Custom Indicators</td>
+                  <td class="text-center"><i class="fas fa-times-circle text-danger"></i></td>
+                  <td class="text-center bg-light"><i class="fas fa-check-circle text-success"></i></td>
+                  <td class="text-center"><i class="fas fa-check-circle text-success"></i></td>
+                </tr>
+                <tr>
+                  <td>Risk Management Tools</td>
+                  <td class="text-center">Basic</td>
+                  <td class="text-center bg-light">Advanced</td>
+                  <td class="text-center">Premium</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- FAQ Section -->
+  <div class="row justify-content-center mt-5">
+    <div class="col-lg-8">
+      <div class="text-center mb-4">
+        <h2>Frequently Asked Questions</h2>
+        <p class="text-muted">Everything you need to know about our subscription plans</p>
+      </div>
+      
+      <div class="accordion" id="planFaqAccordion">
+        <div class="accordion-item border-0 mb-3 shadow-sm">
+          <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Can I upgrade my plan later?
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#planFaqAccordion">
+            <div class="accordion-body">
+              Yes, you can upgrade your plan at any time. When you upgrade, we'll prorate the remaining time on your current subscription and apply it to your new plan.
+            </div>
+          </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-3 shadow-sm">
+          <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Is there a free trial available?
+            </button>
+          </h2>
+          <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#planFaqAccordion">
+            <div class="accordion-body">
+              Yes, we offer a 7-day free trial for all new users. You can test our platform and trading bots before committing to a subscription.
+            </div>
+          </div>
+        </div>
+        
+        <div class="accordion-item border-0 mb-3 shadow-sm">
+          <h2 class="accordion-header" id="headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              What payment methods do you accept?
+            </button>
+          </h2>
+          <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#planFaqAccordion">
+            <div class="accordion-body">
+              We accept credit/debit cards, PayPal, and various cryptocurrencies including Bitcoin, Ethereum, and USDT.
+            </div>
+          </div>
+        </div>
+        
+        <div class="accordion-item border-0 shadow-sm">
+          <h2 class="accordion-header" id="headingFour">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+              Can I cancel my subscription?
+            </button>
+          </h2>
+          <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#planFaqAccordion">
+            <div class="accordion-body">
+              Yes, you can cancel your subscription at any time. Your access will continue until the end of your current billing period.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Testimonials -->
+  <div class="row justify-content-center mt-5">
+    <div class="col-12 text-center mb-4">
+      <h2>What Our Customers Say</h2>
+      <p class="text-muted mb-5">Trusted by traders worldwide</p>
+    </div>
+    
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body">
+          <div class="d-flex mb-3">
+            <div class="text-warning">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+          <p class="card-text">"The Pro plan has completely transformed my trading. The advanced bots and analytics have helped me achieve consistent profits."</p>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:50px;height:50px;">
+                <span>JD</span>
+              </div>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <h6 class="mb-0">John Doe</h6>
+              <small class="text-muted">Pro Plan User</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body">
+          <div class="d-flex mb-3">
+            <div class="text-warning">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+          <p class="card-text">"The Premium plan is worth every penny. The custom bot development and 24/7 VIP support have been invaluable for my trading business."</p>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center" style="width:50px;height:50px;">
+                <span>JS</span>
+              </div>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <h6 class="mb-0">Jane Smith</h6>
+              <small class="text-muted">Premium Plan User</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body">
+          <div class="d-flex mb-3">
+            <div class="text-warning">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star-half-alt"></i>
+            </div>
+          </div>
+          <p class="card-text">"Started with the Basic plan and it was perfect for learning. The upgrade process to Pro was seamless when I needed more features."</p>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width:50px;height:50px;">
+                <span>RJ</span>
+              </div>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <h6 class="mb-0">Robert Johnson</h6>
+              <small class="text-muted">Basic → Pro User</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Call to Action -->
+  <div class="row justify-content-center mt-5">
+    <div class="col-lg-10">
+      <div class="card bg-primary text-white shadow-lg border-0">
+        <div class="card-body p-5 text-center">
+          <h2 class="mb-3">Ready to Start Automated Trading?</h2>
+          <p class="lead mb-4">Join thousands of successful traders using our platform</p>
+          <a href="#" class="btn btn-light btn-lg px-5">Get Started Today</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+  .popular-plan {
+    transform: scale(1.05);
+    z-index: 1;
+    border: 2px solid var(--primary-color) !important;
+  }
+  
+  .ribbon {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    position: absolute;
+    z-index: 1;
+  }
+  
+  .ribbon-top-right {
+    top: -10px;
+    right: -10px;
+  }
+  
+  .ribbon-top-right::before,
+  .ribbon-top-right::after {
+    border-top-color: transparent;
+    border-right-color: transparent;
+  }
+  
+  .ribbon-top-right::before {
+    top: 0;
+    left: 0;
+  }
+  
+  .ribbon-top-right::after {
+    bottom: 0;
+    right: 0;
+  }
+  
+  .ribbon-top-right span {
+    position: absolute;
+    top: 30px;
+    right: -25px;
+    transform: rotate(45deg);
+    width: 200px;
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px 0;
+  }
+</style>
+
+<!-- Toggle Billing Period Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const billingToggle = document.getElementById('billingToggle');
+  const billingPeriodTexts = document.querySelectorAll('.billing-period-text');
+  const pricesMonthly = document.querySelectorAll('.price-monthly');
+  const pricesAnnually = document.querySelectorAll('.price-annually');
+  
+  billingToggle.addEventListener('change', function() {
+    if (this.checked) {
+      // Annual
+      billingPeriodTexts.forEach(text => text.textContent = 'per month, billed annually');
+      pricesMonthly.forEach(price => price.style.display = 'none');
+      pricesAnnually.forEach(price => price.style.display = 'inline');
+    } else {
+      // Monthly
+      billingPeriodTexts.forEach(text => text.textContent = 'per month');
+      pricesMonthly.forEach(price => price.style.display = 'inline');
+      pricesAnnually.forEach(price => price.style.display = 'none');
+    }
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 text-center mb-4">
+      <div class="section-divider centered mb-4"></div>
+      <span class="trust-badge"><i class="fas fa-headset me-2"></i>24/7 Support & Fast Response</span>
+      <h1 class="display-4 mt-4 mb-2">Support Ticket</h1>
+      <p class="lead text-muted mb-5">We're here to help you resolve any issues you may encounter</p>
+    </div>
+  </div>
+  
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      {% if ticket %}
+      <!-- View Existing Ticket -->
+      <div class="card shadow-lg mb-4">
+        <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
+          <h3 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Ticket #{{ ticket.id }}</h3>
+          <span class="badge bg-{{ ticket.status_color }}">{{ ticket.status }}</span>
+        </div>
+        <div class="card-body p-4">
+          <!-- Ticket Details -->
+          <div class="ticket-details mb-4">
+            <div class="row mb-3">
+              <div class="col-md-3 fw-bold">Subject:</div>
+              <div class="col-md-9">{{ ticket.subject }}</div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-3 fw-bold">Date Submitted:</div>
+              <div class="col-md-9">{{ ticket.created_at|date:"F j, Y, g:i a" }}</div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-3 fw-bold">Last Updated:</div>
+              <div class="col-md-9">{{ ticket.updated_at|date:"F j, Y, g:i a" }}</div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-3 fw-bold">Priority:</div>
+              <div class="col-md-9">
+                <span class="badge bg-{{ ticket.priority_color }}">{{ ticket.priority|default:"Medium" }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Ticket Messages -->
+          <h5 class="border-bottom pb-2 mb-4"><i class="fas fa-comments text-primary me-2"></i>Conversation</h5>
+          
+          <div class="ticket-conversation">
+            <!-- Original Message -->
+            <div class="message-container mb-4">
+              <div class="d-flex">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px">
+                    <i class="fas fa-user text-primary"></i>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <div class="message-header d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                      <span class="fw-bold">{{ ticket.user.username }}</span>
+                      <span class="text-muted ms-2 small">{{ ticket.created_at|date:"F j, Y, g:i a" }}</span>
+                    </div>
+                    <span class="badge bg-secondary">Original Message</span>
+                  </div>
+                  <div class="message-content p-3 bg-light rounded">
+                    {{ ticket.message|linebreaks }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Support Responses -->
+            {% for response in ticket.responses.all %}
+            <div class="message-container mb-4">
+              <div class="d-flex">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px">
+                    <i class="fas fa-headset text-white"></i>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <div class="message-header d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                      <span class="fw-bold">Support Team</span>
+                      <span class="text-muted ms-2 small">{{ response.created_at|date:"F j, Y, g:i a" }}</span>
+                    </div>
+                    <span class="badge bg-primary">Support Response</span>
+                  </div>
+                  <div class="message-content p-3 bg-light rounded">
+                    {{ response.message|linebreaks }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          
+          <!-- Reply Form -->
+          {% if ticket.status != 'closed' %}
+          <div class="reply-form mt-4">
+            <h5 class="mb-3"><i class="fas fa-reply text-primary me-2"></i>Add Reply</h5>
+            <form method="post" action="{% url 'ticket_reply' ticket.id %}">
+              {% csrf_token %}
+              <div class="form-group mb-3">
+                <textarea class="form-control" name="reply" rows="4" placeholder="Type your reply here..." required></textarea>
+              </div>
+              <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-2"></i>Send Reply</button>
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#closeTicketModal">
+                  <i class="fas fa-times-circle me-2"></i>Close Ticket
+                </button>
+              </div>
+            </form>
+          </div>
+          {% else %}
+          <div class="alert alert-secondary mt-4">
+            <i class="fas fa-info-circle me-2"></i> This ticket is closed. If you need further assistance, please open a new ticket.
+          </div>
+          <div class="d-grid gap-2 mt-3">
+            <a href="{% url 'submit_ticket' %}" class="btn btn-primary"><i class="fas fa-plus-circle me-2"></i>Create New Ticket</a>
+          </div>
+          {% endif %}
+        </div>
+        <div class="card-footer bg-light py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back to Dashboard</a>
+            <div class="support-info">
+              <i class="fas fa-clock text-success me-1"></i> <span class="text-muted">Typical response time: <strong>24 hours</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <!-- Submit New Ticket -->
+      <div class="card shadow-lg mb-4">
+        <div class="card-header bg-primary text-white py-3">
+          <h3 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Submit a Support Ticket</h3>
+        </div>
+        <div class="card-body p-4">
+          <!-- Support Categories -->
+          <div class="support-categories mb-4">
+            <h5 class="mb-3"><i class="fas fa-tags text-primary me-2"></i>Common Support Categories</h5>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <div class="category-card border rounded p-3 text-center h-100 cursor-pointer" onclick="selectCategory('Account Issues')">
+                  <i class="fas fa-user-cog fa-2x text-primary mb-2"></i>
+                  <h6>Account Issues</h6>
+                  <p class="small text-muted mb-0">Login problems, profile settings</p>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="category-card border rounded p-3 text-center h-100 cursor-pointer" onclick="selectCategory('Billing Questions')">
+                  <i class="fas fa-credit-card fa-2x text-primary mb-2"></i>
+                  <h6>Billing Questions</h6>
+                  <p class="small text-muted mb-0">Payments, subscriptions, refunds</p>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="category-card border rounded p-3 text-center h-100 cursor-pointer" onclick="selectCategory('Technical Support')">
+                  <i class="fas fa-tools fa-2x text-primary mb-2"></i>
+                  <h6>Technical Support</h6>
+                  <p class="small text-muted mb-0">Platform issues, errors, bugs</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Ticket Form -->
+          <form method="post" class="needs-validation">
+            {% csrf_token %}
+            
+            <!-- Priority Selection -->
+            <div class="form-group mb-3">
+              <label for="priority" class="form-label">Priority Level</label>
+              <select class="form-select" id="priority" name="priority">
+                <option value="low">Low - General question or inquiry</option>
+                <option value="medium" selected>Medium - Issue affecting usage</option>
+                <option value="high">High - Critical problem</option>
+              </select>
+            </div>
+            
+            <!-- Subject -->
+            <div class="form-group mb-3">
+              <label for="subject" class="form-label">Subject</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                <input type="text" class="form-control" name="subject" id="subject" placeholder="Brief description of your issue" required>
+              </div>
+            </div>
+            
+            <!-- Message -->
+            <div class="form-group mb-4">
+              <label for="message" class="form-label">Message</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-comment"></i></span>
+                <textarea class="form-control" name="message" id="message" rows="6" placeholder="Please provide as much detail as possible about your issue" required></textarea>
+              </div>
+              <div class="form-text">Include any error messages, steps to reproduce the issue, and what you've already tried.</div>
+            </div>
+            
+            <!-- Attachments -->
+            <div class="form-group mb-4">
+              <label for="attachments" class="form-label">Attachments (Optional)</label>
+              <input type="file" class="form-control" id="attachments" name="attachments" multiple>
+              <div class="form-text">You can upload screenshots or relevant files (Max: 5MB each)</div>
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-paper-plane me-2"></i>Submit Ticket</button>
+            </div>
+          </form>
+          
+          {% if submitted %}
+          <div class="alert alert-success mt-4">
+            <i class="fas fa-check-circle me-2"></i> Your ticket has been submitted! Our team will respond soon. You can view the status of your ticket in the dashboard.
+          </div>
+          {% endif %}
+        </div>
+        <div class="card-footer bg-light py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back to Dashboard</a>
+            <div class="support-info">
+              <i class="fas fa-clock text-success me-1"></i> <span class="text-muted">Typical response time: <strong>24 hours</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- FAQ Section -->
+      <div class="card shadow-lg">
+        <div class="card-header bg-light py-3">
+          <h4 class="mb-0"><i class="fas fa-question-circle me-2 text-primary"></i>Frequently Asked Questions</h4>
+        </div>
+        <div class="card-body p-4">
+          <div class="accordion" id="faqAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="faqOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                  How long will it take to get a response?
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="faqOne" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Our support team typically responds within 24 hours. High priority tickets are addressed more quickly, often within a few hours.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="faqTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Can I check the status of my ticket?
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="faqTwo" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Yes, you can view all your submitted tickets and their status in the "My Tickets" section of your dashboard.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="faqThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                  What information should I include in my ticket?
+                </button>
+              </h2>
+              <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="faqThree" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  For the fastest resolution, please include: detailed description of the issue, any error messages you received, steps to reproduce the problem, and what you've already tried to fix it. Screenshots are also very helpful.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Close Ticket Modal -->
+<div class="modal fade" id="closeTicketModal" tabindex="-1" aria-labelledby="closeTicketModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="closeTicketModalLabel"><i class="fas fa-exclamation-triangle me-2"></i>Close Ticket</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to close this ticket? This action will mark the ticket as resolved.</p>
+        <p>If you need further assistance in the future, you'll need to create a new ticket.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="post" action="{% url 'close_ticket' ticket.id %}" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Close Ticket</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for category selection -->
+<script>
+function selectCategory(category) {
+  document.getElementById('subject').value = category + ": ";
+  document.getElementById('subject').focus();
+  
+  // Highlight selected category
+  const categoryCards = document.querySelectorAll('.category-card');
+  categoryCards.forEach(card => {
+    card.classList.remove('border-primary');
+    if (card.querySelector('h6').innerText === category) {
+      card.classList.add('border-primary');
+    }
+  });
+}
+
+// Add cursor pointer style
+document.addEventListener('DOMContentLoaded', function() {
+  const style = document.createElement('style');
+  style.innerHTML = '.cursor-pointer { cursor: pointer; }';
+  document.head.appendChild(style);
+});
+</script>
+{% endblock %}

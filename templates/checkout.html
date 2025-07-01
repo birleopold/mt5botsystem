@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 text-center mb-4">
+      <div class="section-divider centered mb-4"></div>
+      <span class="trust-badge"><i class="fas fa-lock me-2"></i>Secure Payment & Satisfaction Guarantee</span>
+      <h1 class="display-4 mt-4 mb-2">Complete Your Purchase</h1>
+      <p class="lead text-muted mb-5">You're just one step away from accessing premium trading features</p>
+    </div>
+  </div>
+  
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-lg mb-4">
+        <div class="card-header bg-primary text-white py-3">
+          <h3 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Order Summary</h3>
+        </div>
+        <div class="card-body p-4">
+          <div class="row">
+            <div class="col-md-8">
+              <h4>{{ plan.name }} Plan</h4>
+              <p class="text-muted">{{ plan.description }}</p>
+              
+              <div class="mt-4">
+                <h5>Plan Features:</h5>
+                <ul class="list-group list-group-flush">
+                  {% for feature in plan.features.all %}
+                    <li class="list-group-item bg-transparent px-0">
+                      <i class="fas fa-check-circle text-success me-2"></i>{{ feature.description }}
+                    </li>
+                  {% empty %}
+                    <li class="list-group-item bg-transparent px-0">
+                      <i class="fas fa-check-circle text-success me-2"></i>Access to all basic trading features
+                    </li>
+                    <li class="list-group-item bg-transparent px-0">
+                      <i class="fas fa-check-circle text-success me-2"></i>24/7 customer support
+                    </li>
+                    <li class="list-group-item bg-transparent px-0">
+                      <i class="fas fa-check-circle text-success me-2"></i>Trading analytics dashboard
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="bg-light p-3 rounded text-center">
+                <h5>Total Amount</h5>
+                <h2 class="text-primary mb-0">${{ plan.price }}</h2>
+                <p class="text-muted small mb-0">{{ plan.billing_cycle }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <hr class="my-4">
+          
+          <div class="payment-instructions">
+            <h4><i class="fas fa-info-circle text-primary me-2"></i>Payment Instructions</h4>
+            <p>Please contact our staff to arrange your payment in cash. Once payment is received and confirmed, your subscription will be activated immediately.</p>
+            
+            <div class="alert alert-info mt-3">
+              <div class="d-flex">
+                <div class="me-3">
+                  <i class="fas fa-phone-alt fa-2x text-primary"></i>
+                </div>
+                <div>
+                  <h5 class="alert-heading">Contact Information</h5>
+                  <p class="mb-0">Call us at: <strong>+1 (800) 123-4567</strong></p>
+                  <p class="mb-0">Email: <strong>payments@theautomata.com</strong></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <form method="post" class="mt-4">
+            {% csrf_token %}
+            <input type="hidden" name="method" value="cash">
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="terms" required>
+              <label class="form-check-label" for="terms">
+                I agree to the <a href="{% url 'terms' %}" class="text-primary">Terms of Service</a> and <a href="{% url 'privacy' %}" class="text-primary">Privacy Policy</a>
+              </label>
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-check-circle me-2"></i>Confirm Order</button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer bg-light py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="{% url 'plan_list' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back to Plans</a>
+            <div class="security-badges">
+              <img src="{% static 'img/secure-badge.png' %}" alt="Secure Payment" class="me-2" style="height: 30px;" onerror="this.style.display='none'">
+              <i class="fas fa-lock text-success"></i> <span class="text-muted">Secure Checkout</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Trust Indicators -->
+      <div class="row text-center mt-4">
+        <div class="col-md-4 mb-3 mb-md-0">
+          <div class="p-3">
+            <i class="fas fa-shield-alt fa-2x text-primary mb-3"></i>
+            <h5>Secure Payment</h5>
+            <p class="text-muted small">Your payment information is always protected</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3 mb-md-0">
+          <div class="p-3">
+            <i class="fas fa-headset fa-2x text-primary mb-3"></i>
+            <h5>24/7 Support</h5>
+            <p class="text-muted small">Our team is here to help you anytime</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3">
+            <i class="fas fa-undo fa-2x text-primary mb-3"></i>
+            <h5>Money-Back Guarantee</h5>
+            <p class="text-muted small">30-day satisfaction guarantee</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

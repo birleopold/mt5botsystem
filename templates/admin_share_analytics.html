@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Share & Referral Analytics</h2>
+<h3>Top Referrers</h3>
+<table border="1" cellpadding="6" style="margin-bottom:2em;">
+  <tr><th>User</th><th>Total Shares</th></tr>
+  {% for ref in top_referrers %}
+    <tr><td>{{ ref.user__username }}</td><td>{{ ref.total }}</td></tr>
+  {% endfor %}
+</table>
+<h3>Shares by Platform</h3>
+<table border="1" cellpadding="6" style="margin-bottom:2em;">
+  <tr><th>Platform</th><th>Total Shares</th></tr>
+  {% for plat in shares_by_platform %}
+    <tr><td>{{ plat.platform }}</td><td>{{ plat.total }}</td></tr>
+  {% endfor %}
+</table>
+<h3>Recent Shares</h3>
+<table border="1" cellpadding="6">
+  <tr><th>User</th><th>Platform</th><th>Referral URL</th><th>Message</th><th>Time</th></tr>
+  {% for share in recent_shares %}
+    <tr>
+      <td>{{ share.user.username }}</td>
+      <td>{{ share.platform }}</td>
+      <td style="max-width:250px;overflow-x:auto;">{{ share.referral_url }}</td>
+      <td>{{ share.message|truncatechars:60 }}</td>
+      <td>{{ share.shared_at }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}

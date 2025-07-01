@@ -1,0 +1,18 @@
+{% extends 'forum_base.html' %}
+{% block forum_content %}
+<h2>Start a New Topic</h2>
+<form method="post" style="max-width:500px;margin:auto;">
+  {% csrf_token %}
+  <label for="category">Category:</label><br>
+  <select name="category" id="category" required style="width:100%;padding:0.5em;margin-bottom:1em;">
+    {% for cat in categories %}
+      <option value="{{ cat.id }}" {% if cat.id == selected_category %}selected{% endif %}>{{ cat.name }}</option>
+    {% endfor %}
+  </select>
+  <label for="title">Title:</label><br>
+  <input type="text" name="title" id="title" required style="width:100%;padding:0.5em;margin-bottom:1em;">
+  <label for="message">Message:</label><br>
+  <textarea name="message" id="message" rows="6" required style="width:100%;padding:0.5em;margin-bottom:1em;"></textarea>
+  <button type="submit" style="background:#1976d2;color:#fff;padding:0.7em 2em;border:none;border-radius:6px;cursor:pointer;">Create Topic</button>
+</form>
+{% endblock %}

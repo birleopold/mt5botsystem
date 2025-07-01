@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>API Documentation</h2>
+<p>Welcome to the MetaTrader 5 SaaS API! Use these endpoints to integrate your EAs, manage licenses, and sync data securely.</p>
+
+<h3>Authentication</h3>
+<p>All API requests require your API token in the <code>Authorization: Token &lt;your_token&gt;</code> header.</p>
+
+<h3>Endpoints</h3>
+<ul>
+  <li><b>POST /api/license/validate/</b>: Validate a license key for an EA.<br>
+    <code>{ "key": "LICENSE-KEY", "ea_id": 1 }</code></li>
+  <li><b>POST /api/license/activate/</b>: Activate a license key.<br>
+    <code>{ "key": "LICENSE-KEY" }</code></li>
+  <li><b>POST /api/license/deactivate/</b>: Deactivate (revoke) a license key.<br>
+    <code>{ "key": "LICENSE-KEY" }</code></li>
+  <li><b>GET/POST /api/ea/config/</b>: Fetch config or sync usage.<br>
+    <code>GET ?key=LICENSE-KEY</code><br>
+    <code>POST { "key": "LICENSE-KEY", "usage": { ... } }</code></li>
+  <li><b>POST /api/licenses/</b>: List licenses for a user.<br>
+    <code>{ "username": "your_username", "password": "your_password" }</code></li>
+  <li><b>POST /api/subscriptions/</b>: Get subscription status for a user.<br>
+    <code>{ "username": "your_username", "password": "your_password" }</code></li>
+  <li><b>POST /api/payments/</b>: Get payment history for a user.<br>
+    <code>{ "username": "your_username", "password": "your_password" }</code></li>
+</ul>
+
+<h3>Example: Validate License (cURL)</h3>
+<pre>curl -X POST https://yourdomain.com/api/license/validate/ \
+  -H "Authorization: Token YOUR_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"key":"LICENSE-UUID","ea_id":1}'
+</pre>
+
+<h3>Example: Validate License (MQL5)</h3>
+<pre>// See the API Token page for the latest sample code
+</pre>
+
+<h3>Example: List Licenses</h3>
+<pre>curl -X POST https://yourdomain.com/api/licenses/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"your_username","password":"your_password"}'
+</pre>
+<b>Response:</b>
+<pre>{
+  "licenses": [
+    {"key": "...", "ea": "...", "plan": "...", "status": "...", "created_at": "...", "expires_at": "..."},
+    ...
+  ]
+}
+</pre>
+
+<h3>Example: Subscription Status</h3>
+<pre>curl -X POST https://yourdomain.com/api/subscriptions/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"your_username","password":"your_password"}'
+</pre>
+<b>Response:</b>
+<pre>{
+  "subscriptions": [
+    {"plan": "...", "is_active": true, "start_date": "...", "end_date": "..."},
+    ...
+  ]
+}
+</pre>
+
+<h3>Example: Payment History</h3>
+<pre>curl -X POST https://yourdomain.com/api/payments/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"your_username","password":"your_password"}'
+</pre>
+<b>Response:</b>
+<pre>{
+  "payments": [
+    {"amount": 10.0, "status": "paid", "created_at": "...", "method": "...", "invoice_url": "..."},
+    ...
+  ]
+}
+</pre>
+
+<h3>Errors</h3>
+<p>All errors are returned as JSON with a clear <code>detail</code> message and appropriate HTTP status code.</p>
+
+<h3>Need Help?</h3>
+<p>Contact <a href="mailto:support@yourdomain.com">support@yourdomain.com</a> or visit our <a href="/help/">Help Center</a>.</p>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'forum_base.html' %}
+{% block forum_content %}
+<h2>Community Forum</h2>
+<ul>
+  {% for category in categories %}
+    <li><a href="/forum/category/{{ category.id }}/">{{ category.name }}</a> - {{ category.description }}</li>
+  {% empty %}
+    <li>No categories yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

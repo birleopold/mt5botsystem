@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Market Data & Charts{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .chart-container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+        height: 500px;
+    }
+    
+    .tab-control {
+        display: flex;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
+    }
+    
+    .tab-control button {
+        background: none;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 14px;
+        position: relative;
+    }
+    
+    .tab-control button.active {
+        color: #004d99;
+        font-weight: bold;
+    }
+    
+    .tab-control button.active:after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #004d99;
+    }
+    
+    .market-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+    
+    .market-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 15px;
+    }
+    
+    .market-card h4 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #444;
+    }
+    
+    .up-value {
+        color: #28a745;
+    }
+    
+    .down-value {
+        color: #dc3545;
+    }
+    
+    .symbol-select {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+    
+    .symbol-select button {
+        margin-right: 10px;
+        margin-bottom: 10px;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #f8f9fa;
+        cursor: pointer;
+    }
+    
+    .symbol-select button.active {
+        background-color: #004d99;
+        color: white;
+        border-color: #004d99;
+    }
+
+    /* Dark mode support */
+    .dark-mode .chart-container,
+    .dark-mode .market-card {
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+    }
+    
+    .dark-mode .market-card h4 {
+        color: #e0e0e0;
+    }
+    
+    .dark-mode .symbol-select button {
+        background: #3d3d3d;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+    
+    .dark-mode .symbol-select button.active {
+        background-color: #0066cc;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Market Data & Charts</h1>
+        <div class="btn-group">
+            <a href="{% url 'trading_dashboard' %}" class="btn btn-outline-primary">Trading Dashboard</a>
+            <a href="{% url 'symbol_performance' %}" class="btn btn-outline-primary">Symbol Analysis</a>
+        </div>
+    </div>
+    
+    <!-- Market Summary Cards -->
+    <div class="market-summary mb-4">
+        <div class="market-card">
+            <h4>EUR/USD</h4>
+            <div class="d-flex justify-content-between">
+                <span>1.0921</span>
+                <span class="up-value">+0.05%</span>
+            </div>
+        </div>
+        <div class="market-card">
+            <h4>GBP/USD</h4>
+            <div class="d-flex justify-content-between">
+                <span>1.2645</span>
+                <span class="down-value">-0.12%</span>
+            </div>
+        </div>
+        <div class="market-card">
+            <h4>USD/JPY</h4>
+            <div class="d-flex justify-content-between">
+                <span>110.21</span>
+                <span class="up-value">+0.28%</span>
+            </div>
+        </div>
+        <div class="market-card">
+            <h4>Gold</h4>
+            <div class="d-flex justify-content-between">
+                <span>1,845.30</span>
+                <span class="up-value">+0.68%</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chart Type Tabs -->
+    <div class="tab-control">
+        <button class="active" data-chart-type="tradingview">TradingView Chart</button>
+        <button data-chart-type="ohlc">OHLC Chart</button>
+        <button data-chart-type="candlestick">Candlestick Chart</button>
+    </div>
+    
+    <!-- Symbol Selection -->
+    <div class="symbol-select">
+        <button class="active" data-symbol="EURUSD">EUR/USD</button>
+        <button data-symbol="GBPUSD">GBP/USD</button>
+        <button data-symbol="USDJPY">USD/JPY</button>
+        <button data-symbol="XAUUSD">Gold</button>
+        <button data-symbol="BTCUSD">Bitcoin</button>
+    </div>
+    
+    <!-- Chart Container -->
+    <div class="chart-container" id="chart-container">
+        <!-- TradingView Widget BEGIN -->
+        <div class="tradingview-widget-container">
+            <div id="tradingview_chart"></div>
+        </div>
+        <!-- TradingView Widget END -->
+    </div>
+    
+    <!-- Market News Section -->
+    <h3 class="mb-3">Market News</h3>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">ECB Signals Rate Decision</h5>
+                    <p class="card-text">The European Central Bank has signaled that it might consider rate adjustments in the upcoming meeting.</p>
+                    <small class="text-muted">3 hours ago</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">USD Strengthens on Economic Data</h5>
+                    <p class="card-text">The US Dollar has gained strength following better-than-expected employment and manufacturing data.</p>
+                    <small class="text-muted">5 hours ago</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Gold Prices Rally on Inflation Concerns</h5>
+                    <p class="card-text">Gold has seen an uptick in price as investors seek safe-haven assets amid growing inflation concerns.</p>
+                    <small class="text-muted">Yesterday</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+    // TradingView Widget
+    function initTradingViewWidget(symbol = 'FX:EURUSD') {
+        document.getElementById('tradingview_chart').innerHTML = '';
+        
+        new TradingView.widget({
+            "width": "100%",
+            "height": "100%",
+            "symbol": symbol,
+            "interval": "D",
+            "timezone": "Etc/UTC",
+            "theme": document.body.classList.contains('dark-mode') ? "dark" : "light",
+            "style": "1",
+            "locale": "en",
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
+            "allow_symbol_change": true,
+            "container_id": "tradingview_chart"
+        });
+    }
+    
+    // Initialize TradingView Widget on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        initTradingViewWidget();
+        
+        // Symbol selection
+        const symbolButtons = document.querySelectorAll('.symbol-select button');
+        symbolButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                symbolButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Update chart with selected symbol
+                const symbol = this.getAttribute('data-symbol');
+                initTradingViewWidget('FX:' + symbol);
+            });
+        });
+        
+        // Chart type tabs
+        const chartTypeTabs = document.querySelectorAll('.tab-control button');
+        chartTypeTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                chartTypeTabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Update chart type
+                const chartType = this.getAttribute('data-chart-type');
+                if (chartType === 'tradingview') {
+                    initTradingViewWidget('FX:' + document.querySelector('.symbol-select button.active').getAttribute('data-symbol'));
+                } else {
+                    // For demo purposes, we're using TradingView for all tabs
+                    // In a real implementation, you would use different chart libraries or API data
+                    initTradingViewWidget('FX:' + document.querySelector('.symbol-select button.active').getAttribute('data-symbol'));
+                }
+            });
+        });
+        
+        // Listen for theme changes
+        document.addEventListener('themeChanged', function(e) {
+            if (document.querySelector('.tab-control button.active').getAttribute('data-chart-type') === 'tradingview') {
+                initTradingViewWidget('FX:' + document.querySelector('.symbol-select button.active').getAttribute('data-symbol'));
+            }
+        });
+    });
+</script>
+{% endblock %}

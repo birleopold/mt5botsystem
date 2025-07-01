@@ -1,0 +1,28 @@
+// Add this line after the CHOCH success tracking in both buy and sell position sections
+StoreCHOCHModifiedPosition(ticket, symbol);
+
+// For buy positions (around line 5297-5298):
+} else {
+   // Update CHOCH success tracking
+   recentCHOCHs[latestCHOCHIndex].used = true;
+   
+   // Store this position as CHOCH-modified for tracking
+   StoreCHOCHModifiedPosition(ticket, symbol);
+   
+   // Track this as a CHOCH pattern usage in pair settings
+   UpdateCHOCHSuccess(symbol, true); // Initially mark as success, will update to failure if SL hit
+   Print("[CHOCH_STOPS] Successfully modified stop loss based on CHOCH pattern");
+}
+
+// For sell positions (around line 5283-5284):
+} else {
+   // Update CHOCH success tracking
+   recentCHOCHs[latestCHOCHIndex].used = true;
+   
+   // Store this position as CHOCH-modified for tracking
+   StoreCHOCHModifiedPosition(ticket, symbol);
+   
+   // Track this as a CHOCH pattern usage in pair settings
+   UpdateCHOCHSuccess(symbol, true); // Initially mark as success, will update to failure if SL hit
+   Print("[CHOCH_STOPS] Successfully modified stop loss based on CHOCH pattern");
+}

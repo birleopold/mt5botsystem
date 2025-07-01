@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container" style="max-width:900px;margin:3rem auto;">
+  <div class="section-divider centered"></div>
+  <div class="text-center">
+    <span class="trust-badge">Customer Satisfaction</span>
+    <h2 class="section-heading centered">Refund Policy</h2>
+  </div>
+  
+  <div class="feature-card" style="margin:2rem auto;max-width:750px;">
+    <div class="section-divider centered" style="width:60px;margin:0 auto 2rem;"></div>
+    
+    <div style="margin-bottom:2rem;">
+      <h3 style="margin-bottom:1rem;color:var(--primary-color);">Our Commitment</h3>
+      <p style="margin-bottom:1.5rem;line-height:1.7;color:var(--text-color);">
+        Refunds are issued at our discretion. We strive to ensure all customers are satisfied with our services, but understand that sometimes refunds may be necessary.
+      </p>
+      
+      <h3 style="margin:1.5rem 0 1rem;color:var(--primary-color);">Refund Process</h3>
+      <ol style="margin-bottom:1.5rem;line-height:1.7;color:var(--text-color);padding-left:1.5rem;">
+        <li>Contact our support team with your payment details</li>
+        <li>Provide a clear reason for requesting the refund</li>
+        <li>Our team will review your request within 48 hours</li>
+        <li>If approved, refunds will be processed within 5-7 business days</li>
+      </ol>
+      
+      <h3 style="margin:1.5rem 0 1rem;color:var(--primary-color);">Eligibility Criteria</h3>
+      <ul style="margin-bottom:1.5rem;line-height:1.7;color:var(--text-color);padding-left:1.5rem;">
+        <li>Requests must be made within 14 days of purchase</li>
+        <li>Service quality issues must be documented</li>
+        <li>Unused or partially used services may be eligible for partial refunds</li>
+      </ul>
+    </div>
+    
+    <div class="status-pending-bg" style="padding:1.5rem;border-radius:10px;margin:2rem 0;">
+      <p style="margin:0;display:flex;align-items:center;">
+        <i class="fas fa-info-circle" style="margin-right:0.8rem;color:var(--warning-color);font-size:1.5rem;"></i>
+        <span>Please contact support with your payment details and reason for requesting a refund. We will review your request and respond promptly.</span>
+      </p>
+    </div>
+    
+    <div class="text-center" style="margin-top:2rem;">
+      <a href="{% url 'contact' %}" class="dashboard-btn primary">
+        <i class="fas fa-envelope" style="margin-right:0.5rem;"></i> Contact Support
+      </a>
+      <a href="{% url 'dashboard' %}" class="dashboard-btn" style="margin-left:1rem;">
+        <i class="fas fa-home" style="margin-right:0.5rem;"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

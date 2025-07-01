@@ -1,0 +1,155 @@
+/* Professional Trading Platform Theme CSS Variables */
+:root {
+  /* Rich, sophisticated color scheme - enhanced for professional look */
+  --body-bg: #f0f2f8; /* Slightly lighter for better contrast */
+  --card-bg: #ffffff;
+  --text-color: #1e2a3a; /* Darker for better readability */
+  --text-muted: #5a6478; /* Slightly darker for better contrast */
+  --border-color: #d0d8e6; /* Slightly darker for definition */
+  --primary-color: #2c4159; /* Richer blue for more professional look */
+  --secondary-color: #4d6a86; /* Complementary to primary */
+  --success-color: #3a8c56; /* Richer green */
+  --danger-color: #c23e4b; /* Slightly darker red */
+  --warning-color: #d99030; /* Warmer amber */
+  --info-color: #4d5db1; /* Deeper blue */
+  --shadow-color: rgba(22, 32, 51, 0.15); /* Deeper shadow */
+  --header-bg: #1e2a3a; /* Darker for more professional header */
+  --footer-bg: #eef0f5;
+  --input-bg: #ffffff;
+  --input-border: #c6d0e0; /* Slightly darker for better visibility */
+  --code-bg: #f2f4f8;
+  --nav-link-color: #ffffff;
+  --nav-link-hover-color: #8ce0eb;
+  --badge-color: #d99030;
+  --badge-bg: #fff7e0;
+  --trust-green: #3a8c56;
+  --trust-blue: #4d5db1;
+  --focus-outline: 2px solid #8ce0eb;
+  --section-divider: linear-gradient(90deg, #4d5db1 0%, #8ce0eb 100%);
+  --dropdown-bg: #ffffff;
+  --dropdown-text: #1e2a3a;
+  --dropdown-hover-bg: #f2f4f8;
+  --dropdown-border: #c6d0e0;
+  --btn-text: #ffffff;
+  --primary-color-rgb: 44, 65, 89; /* Updated to match primary color */
+  --secondary-color-rgb: 77, 106, 134; /* Updated to match secondary */
+  --success-color-rgb: 58, 140, 86; /* Updated to match success */
+  --danger-color-rgb: 194, 62, 75; /* Updated to match danger */
+  --transition: all 0.2s ease;
+  
+  /* Enhanced accent colors - sophisticated palette */
+  --accent-1: #4d5db1; /* Deeper Periwinkle */
+  --accent-2: #7ad0db; /* Richer Cyan */
+  --accent-3: #e07e99; /* Deeper Rose */
+  --accent-4: #f0b15b; /* Richer Amber */
+  --accent-5: #59b277; /* Deeper Sage */
+  --accent-1-rgb: 77, 93, 177;
+  --accent-2-rgb: 122, 208, 219;
+  --accent-3-rgb: 224, 126, 153;
+  --accent-4-rgb: 240, 177, 91;
+  --accent-5-rgb: 89, 178, 119;
+  
+  /* Font settings */
+  --font-primary: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, sans-serif;
+  --font-heading: var(--font-primary);
+  --font-monospace: 'Consolas', 'SF Mono', Monaco, monospace;
+  --font-size-base: 16px;
+  --font-size-sm: 14px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-xxl: 24px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-base: 1.6;
+  --line-height-heading: 1.3;
+}
+
+/* Gradients and effects */
+:root {
+  --gradient-primary: linear-gradient(135deg, #2e3b50 0%, #5d7a96 100%);
+  --gradient-secondary: linear-gradient(135deg, #5d6cc0 0%, #8ce0eb 100%);
+  --gradient-success: linear-gradient(135deg, #4e9f6a 0%, #69c287 100%);
+  --gradient-danger: linear-gradient(135deg, #cf4f5c 0%, #e78ea9 100%);
+  --gradient-warning: linear-gradient(135deg, #e0a03f 0%, #fac16b 100%);
+  --card-shadow: 0 1px 3px rgba(29, 39, 60, 0.12), 0 1px 2px rgba(29, 39, 60, 0.08);
+  --card-shadow-hover: 0 4px 8px rgba(29, 39, 60, 0.15), 0 2px 4px rgba(29, 39, 60, 0.1);
+  --input-shadow: inset 0 1px 2px rgba(29, 39, 60, 0.08);
+}
+
+/* Apply CSS variables */
+body {
+  font-size: 17px; /* Increased for readability */
+  background: var(--body-bg);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: var(--theme-transition);
+}
+
+
+/* Card styles */
+.card, .feature-card, .market-card, .how-step, .metric-card, .chart-container {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+  transition: var(--theme-transition);
+  box-shadow: 0 2px 10px var(--shadow-color);
+}
+
+/* Input styles */
+input, select, textarea {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-color: var(--input-border);
+  transition: var(--theme-transition);
+}
+
+/* Table styles */
+table th {
+  background-color: var(--header-bg);
+  color: var(--text-color);
+}
+
+/* Navigation */
+.navbar {
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 10px var(--shadow-color);
+  transition: var(--theme-transition);
+}
+
+.navbar-brand, .nav-link {
+  color: var(--text-color);
+}
+
+/* Footer */
+footer {
+  background-color: var(--footer-bg);
+  color: var(--text-color);
+  border-top: 1px solid var(--border-color);
+  transition: var(--theme-transition);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: var(--theme-transition);
+}
+
+.theme-toggle:hover {
+  background-color: var(--primary-color);
+  color: white;
+}

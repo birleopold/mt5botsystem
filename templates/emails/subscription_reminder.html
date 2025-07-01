@@ -1,0 +1,35 @@
+{% extends "emails/base_email.html" %}
+{% load static %}
+
+{% block title %}Subscription Reminder{% endblock %}
+
+{% block header %}Subscription Expiring Soon{% endblock %}
+
+{% block content %}
+<h2>Hello {{ user.first_name|default:user.username }},</h2>
+
+<p>This is a friendly reminder that your subscription to the <strong>{{ subscription.plan.name }}</strong> plan will expire on <strong>{{ subscription.end_date|date:"F j, Y" }}</strong>.</p>
+
+<div class="info-box">
+    <h3>Subscription Details:</h3>
+    <ul>
+        <li>Plan: {{ subscription.plan.name }}</li>
+        <li>Started: {{ subscription.start_date|date:"F j, Y" }}</li>
+        <li>Expires: {{ subscription.end_date|date:"F j, Y" }}</li>
+        <li>Days remaining: {{ days_remaining }}</li>
+    </ul>
+</div>
+
+<p>To ensure uninterrupted access to your trading bots and analytics, please renew your subscription before it expires.</p>
+
+<p style="text-align: center;">
+    <a href="{{ renewal_url }}" class="button">Renew Subscription</a>
+</p>
+
+<p>If you have any questions about your subscription or need assistance, our support team is here to help.</p>
+
+<p>Thank you for choosing TheAutomata for your trading automation needs!</p>
+
+<p>Best regards,<br>
+The TheAutomata Team</p>
+{% endblock %}

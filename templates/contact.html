@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 text-center mb-4">
+      <div class="section-divider centered mb-4"></div>
+      <span class="trust-badge"><i class="fas fa-headset me-2"></i>24/7 Support & Fast Response</span>
+      <h1 class="display-4 mt-4 mb-2">Contact & Support</h1>
+      <p class="lead text-muted">We're here to help with any questions you might have</p>
+    </div>
+  </div>
+  
+  <div class="row justify-content-center">
+    <div class="col-lg-5 mb-4 mb-lg-0">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-primary text-white py-3">
+          <h3 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Send Us a Message</h3>
+        </div>
+        <div class="card-body p-4">
+          <form method="post" class="needs-validation">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <label for="name" class="form-label">Your Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Your full name" required>
+              </div>
+            </div>
+            <div class="form-group mb-3">
+              <label for="email" class="form-label">Your Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                <input type="email" class="form-control" name="email" id="email" placeholder="email@example.com" required>
+              </div>
+            </div>
+            <div class="form-group mb-3">
+              <label for="subject" class="form-label">Subject</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                <select class="form-select" name="subject" id="subject" required>
+                  <option value="" selected disabled>Select a topic</option>
+                  <option value="account">Account Issues</option>
+                  <option value="billing">Billing Questions</option>
+                  <option value="technical">Technical Support</option>
+                  <option value="feature">Feature Request</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group mb-4">
+              <label for="message" class="form-label">Message</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-comment"></i></span>
+                <textarea class="form-control" name="message" id="message" rows="5" placeholder="Please describe your issue in detail" required></textarea>
+              </div>
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-paper-plane me-2"></i>Send Message</button>
+            </div>
+          </form>
+          
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-success mt-4">
+                <i class="fas fa-check-circle me-2"></i>{{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-4">
+      <div class="card shadow-lg mb-4">
+        <div class="card-header bg-primary text-white py-3">
+          <h3 class="mb-0"><i class="fas fa-info-circle me-2"></i>Contact Information</h3>
+        </div>
+        <div class="card-body p-4">
+          <div class="d-flex mb-4">
+            <div class="flex-shrink-0 me-3">
+              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px">
+                <i class="fas fa-envelope"></i>
+              </div>
+            </div>
+            <div>
+              <h5>Email</h5>
+              <p class="text-muted mb-0">support@theautomata.com</p>
+            </div>
+          </div>
+          
+          <div class="d-flex mb-4">
+            <div class="flex-shrink-0 me-3">
+              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px">
+                <i class="fas fa-phone"></i>
+              </div>
+            </div>
+            <div>
+              <h5>Phone</h5>
+              <p class="text-muted mb-0">+1 (800) 123-4567</p>
+            </div>
+          </div>
+          
+          <div class="d-flex">
+            <div class="flex-shrink-0 me-3">
+              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px">
+                <i class="fas fa-clock"></i>
+              </div>
+            </div>
+            <div>
+              <h5>Support Hours</h5>
+              <p class="text-muted mb-0">24/7 Customer Support</p>
+              <p class="text-muted mb-0">Always available to help you</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white py-3">
+          <h3 class="mb-0"><i class="fas fa-question-circle me-2"></i>Quick Help</h3>
+        </div>
+        <div class="card-body p-4">
+          <div class="d-grid gap-2">
+            <a href="{% url 'faq' %}" class="btn btn-outline-primary"><i class="fas fa-question-circle me-2"></i>FAQ</a>
+            <a href="{% url 'submit_ticket' %}" class="btn btn-outline-primary"><i class="fas fa-ticket-alt me-2"></i>Submit Ticket</a>
+            <a href="#" class="btn btn-outline-primary"><i class="fas fa-book me-2"></i>Knowledge Base</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

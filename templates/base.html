@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}TheAutomata{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="TheAutomata Platform for trading bots and analytics">
+    <meta name="theme-color" content="#1976d2">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="icon" href="{% static 'img/favicon.ico' %}">
+    <link rel="apple-touch-icon" href="{% static 'img/icons/icon-192x192.png' %}">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Shepherd.js Tour CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/css/shepherd.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+    <link rel="stylesheet" href="{% static 'css/professional.css' %}">
+    <link rel="stylesheet" href="{% static 'css/enhanced-components.css' %}">
+    <style>
+      /* Base styles that don't depend on theme variables */
+      body { 
+        font-family: 'Segoe UI', Arial, sans-serif; 
+        margin: 0; 
+        padding: 0; 
+        transition: var(--theme-transition);
+      }
+      .navbar { 
+        padding: 1em 2em; 
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+      }
+      .navbar .brand { 
+        font-weight: bold; 
+        font-size: 1.3em; 
+        letter-spacing: 1px; 
+      }
+      .container { 
+        max-width: 1140px; 
+        margin: 2em auto; 
+        padding: 2em; 
+        border-radius: 8px; 
+      }
+      .footer { 
+        text-align: center; 
+        padding: 1.5em 1em; 
+        position: relative; 
+        bottom: 0; 
+        width: 100%; 
+        margin-top: 2em; 
+      }
+      @media (max-width: 768px) {
+        .container { padding: 1em; }
+        .navbar { flex-direction: column; align-items: flex-start; }
+      }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% if user.is_authenticated %}authenticated-user{% endif %}">
+    <nav class="navbar navbar-expand-lg app-navbar">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+          <img src="{% static 'img/logo.png' %}" alt="TheAutomata Logo" height="36">
+          <span class="ms-2">TheAutomata</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarMain">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'trading_dashboard' %}">Trading Analytics</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'plan_list' %}">Plans</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'contact' %}">Support</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
+            </li>
+          </ul>
+          <div class="d-flex align-items-center">
+            <!-- App notifications button -->
+            <a href="/notifications/" class="nav-link position-relative me-3">
+              <i class="fas fa-bell"></i>
+              {% if unread_notifications_count > 0 %}
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ unread_notifications_count }}
+              </span>
+              {% endif %}
+            </a>
+            
+            <!-- Notifications -->
+            <div class="dropdown me-3">
+              <span id="notifBell" data-bs-toggle="dropdown" aria-expanded="false" style="cursor:pointer;position:relative;">
+                <i class="fas fa-bell" style="font-size:1.2em;"></i>
+                <span id="notifCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;"></span>
+              </span>
+              <div class="dropdown-menu dropdown-menu-end" id="notifDropdown" style="width:340px;max-width:90vw;">
+                <div id="notifList" style="max-height:340px;overflow-y:auto;"></div>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-center" href="{% url 'notifications' %}">See all</a>
+              </div>
+            </div>
+            
+            <!-- Authentication -->
+            {% if user.is_authenticated %}
+              <div class="dropdown">
+                <a class="dropdown-toggle nav-link" href="#" id="userMenu" data-bs-toggle="dropdown">
+                  <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="{% url 'dashboard' %}">My Dashboard</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <form action="{% url 'logout' %}" method="post" class="logout-form">
+                      {% csrf_token %}
+                      <button type="submit" class="dropdown-item">
+                        <i class="fas fa-sign-out-alt me-1"></i> Log Out
+                      </button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            {% else %}
+              <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
+              <a href="{% url 'register' %}" class="btn btn-primary">Sign Up</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
+    <main class="container">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+      
+      {% block content %}{% endblock %}
+    </main>
+    
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 text-center text-md-start">
+            <p>&copy; {{ now|date:'Y' }} TheAutomata</p>
+          </div>
+          <div class="col-md-6 text-center text-md-end">
+            <a href="{% url 'privacy' %}" class="me-3">Privacy Policy</a>
+            <a href="{% url 'terms' %}" class="me-3">Terms of Service</a>
+            <a href="{% url 'refund' %}" class="me-3">Refund Policy</a>
+            <a href="{% url 'contact' %}">Contact & Support</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- Core JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Shepherd.js Tour Library -->
+    <script src="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/js/shepherd.min.js"></script>
+    <!-- Onboarding Tour Script -->
+    <script src="{% static 'js/onboarding.js' %}"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('{% static "js/service-worker.js" %}');
+        });
+      }
+    </script>
+    
+    <!-- Theme toggle functionality -->
+    <script>
+      // Theme management
+      const themeToggle = document.getElementById('themeToggle');
+      const darkIcon = document.getElementById('darkIcon');
+      const lightIcon = document.getElementById('lightIcon');
+      
+      // Check for saved theme preference or default to light
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.body.classList.toggle('dark-mode', savedTheme === 'dark');
+      
+      // Update icon visibility
+      if (savedTheme === 'dark') {
+        darkIcon.style.display = 'none';
+        lightIcon.style.display = 'inline-block';
+      }
+      
+      // Toggle theme when button is clicked
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        
+        // Store theme preference
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        
+        // Update icon visibility
+        darkIcon.style.display = isDark ? 'none' : 'inline-block';
+        lightIcon.style.display = isDark ? 'inline-block' : 'none';
+        
+        // Notify components that need to update their styling
+        document.dispatchEvent(new CustomEvent('themeChanged', {
+          detail: { isDark }
+        }));
+      });
+      
+      // Notifications functionality
+      function fetchNotifications() {
+        fetch('/notifications/list/')
+          .then(r => r.json())
+          .then(d => {
+            const notifCount = document.getElementById('notifCount');
+            notifCount.style.display = d.unread_count > 0 ? 'inline-block' : 'none';
+            notifCount.innerText = d.unread_count;
+            
+            let html = '';
+            d.notifications.forEach(n => {
+              html += `
+                <div class="dropdown-item ${n.is_read ? '' : 'bg-light'}">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <strong>${n.type.replace('_',' ').toUpperCase()}</strong>
+                    <small class="text-muted">${n.created_at}</small>
+                  </div>
+                  <p class="mb-0">${n.message}</p>
+                  ${n.url ? `<a href="${n.url}" class="btn btn-sm btn-link p-0 mt-1">View</a>` : ''}
+                </div>
+                <div class="dropdown-divider"></div>
+              `;
+            });
+            
+            const notifList = document.getElementById('notifList');
+            notifList.innerHTML = html || '<div class="dropdown-item text-center text-muted">No notifications</div>';
+          });
+      }
+      
+      // Initial notifications fetch
+      fetchNotifications();
+      
+      // Periodically check for new notifications
+      setInterval(fetchNotifications, 60000);
+    </script>
+    
+    <!-- Page-specific JavaScript -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="section-divider centered"></div>
+  <span class="trust-badge">Top Community Referrers</span>
+  <h2 class="text-center" style="margin-top:1.2em;">Top Referrers Leaderboard</h2>
+  <div style="max-width:600px;margin:2em auto;">
+    <table class="dashboard-table" style="width:100%;">
+      <tr><th>Rank</th><th>User</th><th>Referrals</th></tr>
+      {% for ref in top_referrers %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ ref.referrer__username }}</td>
+          <td>{{ ref.total }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+    <div class="text-center" style="margin-top:2em;">
+      <a href="{% url 'dashboard' %}" class="dashboard-btn primary">Back to Dashboard</a>
+    </div>
+  </div>
+{% endblock %}

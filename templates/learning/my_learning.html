@@ -1,0 +1,405 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load learning_filters %}
+
+{% block extra_css %}
+<style>
+  .resource-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+  }
+  
+  .resource-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .progress-ring {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .resource-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 0 0.25rem 0 0.5rem;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .dashboard-header {
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+    padding: 3rem 0;
+    color: white;
+    margin-bottom: 3rem;
+  }
+  
+  .resource-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+  }
+  
+  .progress-circle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .progress-circle-bg {
+    fill: none;
+    stroke: #e9ecef;
+    stroke-width: 4;
+  }
+  
+  .progress-circle-progress {
+    fill: none;
+    stroke: #0d6efd;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+  
+  .progress-circle-text {
+    font-size: 0.8rem;
+    font-weight: bold;
+    fill: #0d6efd;
+  }
+  
+  .stat-card {
+    border-radius: 10px;
+    border: none;
+    transition: transform 0.3s ease;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .stat-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-right: 1rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-3">
+            <li class="breadcrumb-item"><a href="{% url 'learning_center' %}" class="text-white">Learning Center</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">My Learning</li>
+          </ol>
+        </nav>
+        <h1 class="display-5 fw-bold mb-3">My Learning Dashboard</h1>
+        <p class="lead mb-0">Track your progress, continue where you left off, and discover new resources.</p>
+      </div>
+      <div class="col-lg-4 text-center d-none d-lg-block">
+        <img src="{% static 'img/learning_dashboard.svg' %}" alt="Learning Dashboard" class="img-fluid" style="max-height: 200px;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- Stats Row -->
+  <div class="row mb-5">
+    <div class="col-md-4 mb-4 mb-md-0">
+      <div class="card stat-card shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center">
+            <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+              <i class="fas fa-book-reader fa-2x"></i>
+            </div>
+            <div>
+              <h6 class="text-muted mb-1">In Progress</h6>
+              <h3 class="mb-0">{{ in_progress|length }}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-4 mb-md-0">
+      <div class="card stat-card shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center">
+            <div class="stat-icon bg-success bg-opacity-10 text-success">
+              <i class="fas fa-check-circle fa-2x"></i>
+            </div>
+            <div>
+              <h6 class="text-muted mb-1">Completed</h6>
+              <h3 class="mb-0">{{ completed|length }}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card stat-card shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center">
+            <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+              <i class="fas fa-crown fa-2x"></i>
+            </div>
+            <div>
+              <h6 class="text-muted mb-1">Access Level</h6>
+              <h3 class="mb-0">
+                {% if subscription %}
+                  {% if 'pro' in subscription.plan.name|lower %}
+                    Pro
+                  {% elif 'premium' in subscription.plan.name|lower %}
+                    Premium
+                  {% elif 'basic' in subscription.plan.name|lower %}
+                    Basic
+                  {% else %}
+                    Free
+                  {% endif %}
+                {% else %}
+                  Free
+                {% endif %}
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- In Progress Section -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="mb-4 border-bottom pb-2">Continue Learning</h2>
+    </div>
+    
+    {% if in_progress %}
+      {% for progress in in_progress %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card resource-card shadow-sm h-100 position-relative">
+            {% if progress.resource.access_level != 'free' %}
+              <div class="resource-badge bg-warning text-dark">
+                <i class="fas 
+                  {% if progress.resource.access_level == 'basic' %}fa-star
+                  {% elif progress.resource.access_level == 'premium' %}fa-crown
+                  {% elif progress.resource.access_level == 'pro' %}fa-gem
+                  {% endif %} me-1"></i>
+                {{ progress.resource.get_access_level_display }}
+              </div>
+            {% endif %}
+            
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center">
+                  <div class="resource-icon 
+                    {% if progress.resource.resource_type == 'article' %}bg-primary bg-opacity-10 text-primary
+                    {% elif progress.resource.resource_type == 'video' %}bg-danger bg-opacity-10 text-danger
+                    {% elif progress.resource.resource_type == 'pdf' %}bg-success bg-opacity-10 text-success
+                    {% elif progress.resource.resource_type == 'course' %}bg-warning bg-opacity-10 text-warning
+                    {% elif progress.resource.resource_type == 'webinar' %}bg-info bg-opacity-10 text-info
+                    {% else %}bg-secondary bg-opacity-10 text-secondary{% endif %}" style="width: 40px; height: 40px; margin-bottom: 0;">
+                    <i class="fas 
+                      {% if progress.resource.resource_type == 'article' %}fa-file-alt
+                      {% elif progress.resource.resource_type == 'video' %}fa-video
+                      {% elif progress.resource.resource_type == 'pdf' %}fa-file-pdf
+                      {% elif progress.resource.resource_type == 'course' %}fa-graduation-cap
+                      {% elif progress.resource.resource_type == 'webinar' %}fa-laptop
+                      {% else %}fa-file{% endif %}"></i>
+                  </div>
+                  <span class="badge bg-secondary ms-2">{{ progress.resource.get_resource_type_display }}</span>
+                </div>
+                
+                <div class="progress-circle">
+                  <svg viewBox="0 0 100 100">
+                    <circle class="progress-circle-bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="progress-circle-progress" cx="50" cy="50" r="45" 
+                            stroke-dasharray="283" 
+                            stroke-dashoffset="{{ 283|add:'-'|add:progress.progress_percent|add:'*2.83'|floatformat:0 }}"></circle>
+                    <text class="progress-circle-text" x="50" y="55" text-anchor="middle">{{ progress.progress_percent }}%</text>
+                  </svg>
+                </div>
+              </div>
+              
+              <h5 class="card-title">{{ progress.resource.title }}</h5>
+              <p class="card-text text-muted">{{ progress.resource.description|truncatechars:100 }}</p>
+              
+              <div class="progress mb-3" style="height: 5px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: {{ progress.progress_percent }}%;" 
+                     aria-valuenow="{{ progress.progress_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">Last accessed: {{ progress.last_accessed|date:"M d, Y" }}</small>
+                <a href="{{ progress.resource.get_absolute_url }}" class="btn btn-primary btn-sm">
+                  <i class="fas fa-play me-1"></i>Continue
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>You haven't started any resources yet. Browse the learning center to find resources that interest you.
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- Recommended Section -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="mb-4 border-bottom pb-2">Recommended for You</h2>
+    </div>
+    
+    {% if recommended %}
+      {% for resource in recommended %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card resource-card shadow-sm h-100 position-relative">
+            {% if resource.access_level != 'free' %}
+              <div class="resource-badge bg-warning text-dark">
+                <i class="fas 
+                  {% if resource.access_level == 'basic' %}fa-star
+                  {% elif resource.access_level == 'premium' %}fa-crown
+                  {% elif resource.access_level == 'pro' %}fa-gem
+                  {% endif %} me-1"></i>
+                {{ resource.get_access_level_display }}
+              </div>
+            {% endif %}
+            
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="resource-icon 
+                  {% if resource.resource_type == 'article' %}bg-primary bg-opacity-10 text-primary
+                  {% elif resource.resource_type == 'video' %}bg-danger bg-opacity-10 text-danger
+                  {% elif resource.resource_type == 'pdf' %}bg-success bg-opacity-10 text-success
+                  {% elif resource.resource_type == 'course' %}bg-warning bg-opacity-10 text-warning
+                  {% elif resource.resource_type == 'webinar' %}bg-info bg-opacity-10 text-info
+                  {% else %}bg-secondary bg-opacity-10 text-secondary{% endif %}" style="width: 40px; height: 40px; margin-bottom: 0;">
+                  <i class="fas 
+                    {% if resource.resource_type == 'article' %}fa-file-alt
+                    {% elif resource.resource_type == 'video' %}fa-video
+                    {% elif resource.resource_type == 'pdf' %}fa-file-pdf
+                    {% elif resource.resource_type == 'course' %}fa-graduation-cap
+                    {% elif resource.resource_type == 'webinar' %}fa-laptop
+                    {% else %}fa-file{% endif %}"></i>
+                </div>
+                <div class="ms-3">
+                  <span class="badge bg-secondary">{{ resource.get_resource_type_display }}</span>
+                  <span class="ms-2 text-muted"><i class="far fa-clock me-1"></i>{{ resource.estimated_duration }} min</span>
+                </div>
+              </div>
+              
+              <h5 class="card-title">{{ resource.title }}</h5>
+              <p class="card-text text-muted">{{ resource.description|truncatechars:100 }}</p>
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+              <a href="{{ resource.get_absolute_url }}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-arrow-right me-1"></i>Start Learning
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>No recommended resources available at this time. Check back soon!
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- Completed Section -->
+  <div class="row">
+    <div class="col-12">
+      <h2 class="mb-4 border-bottom pb-2">Completed Resources</h2>
+    </div>
+    
+    {% if completed %}
+      {% for progress in completed %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card resource-card shadow-sm h-100 position-relative">
+            {% if progress.resource.access_level != 'free' %}
+              <div class="resource-badge bg-warning text-dark">
+                <i class="fas 
+                  {% if progress.resource.access_level == 'basic' %}fa-star
+                  {% elif progress.resource.access_level == 'premium' %}fa-crown
+                  {% elif progress.resource.access_level == 'pro' %}fa-gem
+                  {% endif %} me-1"></i>
+                {{ progress.resource.get_access_level_display }}
+              </div>
+            {% endif %}
+            
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center">
+                  <div class="resource-icon 
+                    {% if progress.resource.resource_type == 'article' %}bg-primary bg-opacity-10 text-primary
+                    {% elif progress.resource.resource_type == 'video' %}bg-danger bg-opacity-10 text-danger
+                    {% elif progress.resource.resource_type == 'pdf' %}bg-success bg-opacity-10 text-success
+                    {% elif progress.resource.resource_type == 'course' %}bg-warning bg-opacity-10 text-warning
+                    {% elif progress.resource.resource_type == 'webinar' %}bg-info bg-opacity-10 text-info
+                    {% else %}bg-secondary bg-opacity-10 text-secondary{% endif %}" style="width: 40px; height: 40px; margin-bottom: 0;">
+                    <i class="fas 
+                      {% if progress.resource.resource_type == 'article' %}fa-file-alt
+                      {% elif progress.resource.resource_type == 'video' %}fa-video
+                      {% elif progress.resource.resource_type == 'pdf' %}fa-file-pdf
+                      {% elif progress.resource.resource_type == 'course' %}fa-graduation-cap
+                      {% elif progress.resource.resource_type == 'webinar' %}fa-laptop
+                      {% else %}fa-file{% endif %}"></i>
+                  </div>
+                  <span class="badge bg-secondary ms-2">{{ progress.resource.get_resource_type_display }}</span>
+                </div>
+                
+                <div class="badge bg-success">
+                  <i class="fas fa-check-circle me-1"></i>Completed
+                </div>
+              </div>
+              
+              <h5 class="card-title">{{ progress.resource.title }}</h5>
+              <p class="card-text text-muted">{{ progress.resource.description|truncatechars:100 }}</p>
+              
+              <div class="progress mb-3" style="height: 5px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" 
+                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">Completed: {{ progress.last_accessed|date:"M d, Y" }}</small>
+                <a href="{{ progress.resource.get_absolute_url }}" class="btn btn-outline-success btn-sm">
+                  <i class="fas fa-redo me-1"></i>Review
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>You haven't completed any resources yet. Start learning to see your progress here.
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

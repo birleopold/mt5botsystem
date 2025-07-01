@@ -1,0 +1,85 @@
+/* Custom styles for the onboarding tour */
+.shepherd-theme-custom {
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+}
+
+.shepherd-theme-custom .shepherd-content {
+  border-radius: 8px;
+}
+
+.shepherd-theme-custom .shepherd-header {
+  background: var(--primary-color);
+  padding: 15px 20px;
+  border-radius: 8px 8px 0 0;
+}
+
+.shepherd-theme-custom .shepherd-title {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.shepherd-theme-custom .shepherd-text {
+  padding: 20px;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+
+.shepherd-theme-custom .shepherd-footer {
+  padding: 10px 20px 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.shepherd-theme-custom .shepherd-button {
+  margin-left: 8px;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shepherd-theme-custom .shepherd-button-primary {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.shepherd-theme-custom .shepherd-button-primary:hover {
+  background: var(--secondary-color);
+}
+
+.shepherd-theme-custom .shepherd-button-secondary {
+  background: transparent;
+  color: var(--text-color);
+  border: 1px solid #ddd;
+}
+
+.shepherd-theme-custom .shepherd-button-secondary:hover {
+  background: #f8f9fa;
+}
+
+.shepherd-theme-custom .shepherd-arrow::before {
+  background: var(--primary-color);
+}
+
+/* Dark mode adjustments */
+body.dark-mode .shepherd-theme-custom {
+  background-color: var(--card-bg);
+}
+
+body.dark-mode .shepherd-theme-custom .shepherd-text {
+  color: var(--text-color);
+}
+
+body.dark-mode .shepherd-theme-custom .shepherd-button-secondary {
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .shepherd-theme-custom .shepherd-button-secondary:hover {
+  background: var(--input-bg);
+}

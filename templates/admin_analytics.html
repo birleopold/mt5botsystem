@@ -1,0 +1,55 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+<h1>Analytics Dashboard</h1>
+<div style="display:flex;flex-wrap:wrap;gap:2em;">
+  <div style="flex:1;min-width:250px;background:#f5f5f5;padding:1.5em;border-radius:8px;">
+    <h3>Users</h3>
+    <p><b>Total:</b> {{ total_users }}</p>
+    <p><b>Active (30d):</b> {{ active_users }}</p>
+    <p><b>Signups (30d):</b> {{ signups_last_30 }}</p>
+  </div>
+  <div style="flex:1;min-width:250px;background:#f5f5f5;padding:1.5em;border-radius:8px;">
+    <h3>Subscriptions</h3>
+    <p><b>Active:</b> {{ subscriptions_active }}</p>
+    <p><b>Expired:</b> {{ subscriptions_expired }}</p>
+    <p><b>Cancelled (all time):</b> {{ subscriptions_cancelled }}</p>
+    <p><b>Churn (30d):</b> {{ churn_last_30 }}</p>
+  </div>
+  <div style="flex:1;min-width:250px;background:#f5f5f5;padding:1.5em;border-radius:8px;">
+    <h3>Licenses</h3>
+    <p><b>Issued:</b> {{ licenses_issued }}</p>
+    <p><b>Active:</b> {{ licenses_active }}</p>
+    <p><b>Expired:</b> {{ licenses_expired }}</p>
+  </div>
+  <div style="flex:1;min-width:250px;background:#f5f5f5;padding:1.5em;border-radius:8px;">
+    <h3>Revenue</h3>
+    <p><b>Total:</b> {{ revenue_total }}</p>
+    <p><b>This Month:</b> {{ revenue_month }}</p>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div style="margin-top:2em;">
+  <canvas id="signupsChart" width="400" height="150"></canvas>
+</div>
+<script>
+fetch('/analytics/admin-data/')
+  .then(response => response.json())
+  .then(data => {
+    const ctx = document.getElementById('signupsChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Signups (last 12 months)',
+          data: data.signups,
+          borderColor: '#1976d2',
+          backgroundColor: 'rgba(25,118,210,0.08)',
+          fill: true,
+        }]
+      },
+      options: {responsive:true, plugins:{legend:{display:false}}}
+    });
+  });
+</script>
+{% endblock %}

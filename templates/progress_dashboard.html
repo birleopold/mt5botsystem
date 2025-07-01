@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/charts.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+{% block content %}
+<h2>Your Analytics & Progress</h2>
+<div class="level-xp">
+  <h3>Level & XP</h3>
+  <div class="level">Level {{ userlevel.level }}</div>
+  <div class="progress-bar">
+    <div class="progress" style="width:{{ userlevel.progress_percent }}%;"></div>
+  </div>
+  <div>XP: {{ userlevel.xp }} / {{ userlevel.xp_for_next_level }} &mdash; Streak: {{ userlevel.streak }} days</div>
+</div>
+<div class="badges">
+  <h3>Your Badges</h3>
+  {% include 'partials/xp_badges.html' %}
+</div>
+<div class="recent-activity">
+  <h3>Recent Activity</h3>
+  <ul>
+    {% for event in events %}
+      <li>{{ event.created_at|date:"Y-m-d H:i" }} &mdash; {{ event.event_type|capfirst }}{% if event.event_value %} ({{ event.event_value }}){% endif %}</li>
+    {% endfor %}
+  </ul>
+</div>
+<div class="xp-gain-chart">
+  <h3>XP Gain Over Time</h3>
+  <canvas id="xpChart" height="80"></canvas>
+</div>
+<script>
+(function() {
+  var ctx = document.getElementById('xpChart').getContext('2d');
+  // Example: Gather XP gain events from the backend for chart
+  var data = [ {% for event in events reversed %}{% if event.event_type == 'xp_gain' %}{{ event.event_value|cut:":.*" }},{% endif %}{% endfor %} ];
+  var labels = [ {% for event in events reversed %}{% if event.event_type == 'xp_gain' %}'{{ event.created_at|date:"Y-m-d" }}',{% endif %}{% endfor %} ];
+  renderLineChart(ctx, data, labels, 'XP Gain');
+})();
+</script>
+<a href="{% url 'dashboard' %}">Back to Dashboard</a>
+{% endblock %}

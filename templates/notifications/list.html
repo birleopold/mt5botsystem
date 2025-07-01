@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="notifications-container">
+    <h2>Your Notifications</h2>
+    <ul class="notifications-list">
+        {% for notification in notifications %}
+            <li class="notification {% if not notification.is_read %}unread{% endif %}">
+                <span class="notification-message">{{ notification.message }}</span>
+                <span class="notification-date">{{ notification.created_at|date:'Y-m-d H:i' }}</span>
+            </li>
+        {% empty %}
+            <li>No notifications found.</li>
+        {% endfor %}
+    </ul>
+</div>
+<style>
+.notifications-container { max-width: 600px; margin: 2rem auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 2rem; }
+.notifications-list { list-style: none; padding: 0; }
+.notification { padding: 1rem; border-bottom: 1px solid #eee; }
+.notification.unread { background: #eaf4ff; font-weight: bold; }
+.notification-message { display: block; margin-bottom: 0.5rem; }
+.notification-date { font-size: 0.9em; color: #888; }
+</style>
+{% endblock %}

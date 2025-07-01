@@ -1,0 +1,29 @@
+<div class="social-share" style="margin:1em 0;">
+  <h4>Share & Earn</h4>
+  <button id="share-btn" style="background:#1976d2;color:#fff;padding:0.7em 1.5em;border:none;border-radius:6px;cursor:pointer;">Share on Social</button>
+  <span id="share-feedback" style="margin-left:1em;font-size:0.95em;color:#388e3c;display:none;">Thanks for sharing! XP awarded.</span>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('share-btn');
+  var feedback = document.getElementById('share-feedback');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Check out TheAutomata!',
+          text: 'Monetize your MetaTrader 5 strategies and earn rewards.',
+          url: window.location.origin
+        }).then(function() {
+          fetch('/api/social_share/', {method:'POST',headers:{'X-CSRFToken':document.querySelector('[name=csrfmiddlewaretoken]').value}})
+            .then(() => { feedback.style.display = 'inline'; });
+        });
+      } else {
+        navigator.clipboard.writeText(window.location.origin);
+        fetch('/api/social_share/', {method:'POST',headers:{'X-CSRFToken':document.querySelector('[name=csrfmiddlewaretoken]').value}})
+          .then(() => { feedback.style.display = 'inline'; });
+      }
+    });
+  }
+});
+</script>

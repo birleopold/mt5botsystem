@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Symbol Performance Analysis{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .filter-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .profit-positive {
+        color: #28a745;
+    }
+    .profit-negative {
+        color: #dc3545;
+    }
+    .performance-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+    .performance-header {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    .performance-body {
+        padding: 20px;
+    }
+    .win-rate-bar {
+        height: 10px;
+        border-radius: 5px;
+        background-color: #e9ecef;
+        margin-top: 5px;
+    }
+    .win-rate-progress {
+        height: 100%;
+        border-radius: 5px;
+        background-color: #28a745;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Symbol Performance Analysis</h1>
+        <a href="{% url 'trading_dashboard' %}" class="btn btn-outline-primary">Back to Dashboard</a>
+    </div>
+    
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="days" class="form-label">Time Period</label>
+                <select name="days" id="days" class="form-select">
+                    <option value="7" {% if days == 7 %}selected{% endif %}>Last 7 days</option>
+                    <option value="30" {% if days == 30 %}selected{% endif %}>Last 30 days</option>
+                    <option value="90" {% if days == 90 %}selected{% endif %}>Last 90 days</option>
+                    <option value="180" {% if days == 180 %}selected{% endif %}>Last 6 months</option>
+                    <option value="365" {% if days == 365 %}selected{% endif %}>Last year</option>
+                </select>
+            </div>
+            
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Apply</button>
+            </div>
+        </form>
+    </div>
+    
+    {% if symbols %}
+    <div class="row">
+        {% for symbol in symbols %}
+        <div class="col-md-4">
+            <div class="performance-card">
+                <div class="performance-header">
+                    <h5 class="mb-0">{{ symbol.symbol }}</h5>
+                </div>
+                <div class="performance-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Total Profit/Loss:</span>
+                        <span class="{% if symbol.total_profit >= 0 %}profit-positive{% else %}profit-negative{% endif %} fw-bold">
+                            {{ symbol.total_profit|floatformat:2 }}
+                        </span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Win Rate:</span>
+                            <span>{{ symbol.win_rate|floatformat:1 }}%</span>
+                        </div>
+                        <div class="win-rate-bar">
+                            <div class="win-rate-progress" style="width: {{ symbol.win_rate }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Total Trades</small>
+                            <p class="mb-0">{{ symbol.trade_count }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Win/Loss</small>
+                            <p class="mb-0">{{ symbol.win_count }}/{{ symbol.loss_count }}</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Avg. Win</small>
+                            <p class="mb-0 profit-positive">{{ symbol.avg_profit|floatformat:2 }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Avg. Loss</small>
+                            <p class="mb-0 profit-negative">{{ symbol.avg_loss|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-2">
+                        <div class="col-6">
+                            <small class="text-muted">Best Trade</small>
+                            <p class="mb-0 profit-positive">{{ symbol.max_profit|floatformat:2 }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Worst Trade</small>
+                            <p class="mb-0 profit-negative">{{ symbol.max_loss|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        No trading data available for the selected time period.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

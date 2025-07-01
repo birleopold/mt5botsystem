@@ -1,0 +1,13 @@
+{% extends 'forum_base.html' %}
+{% block forum_content %}
+<h2>{{ category.name }}</h2>
+<p>{{ category.description }}</p>
+<ul>
+  {% for topic in topics %}
+    <li><a href="/forum/topic/{{ topic.id }}/">{{ topic.title }}</a> by {{ topic.user.username }} ({{ topic.created_at|date:'Y-m-d H:i' }})</li>
+  {% empty %}
+    <li>No topics yet.</li>
+  {% endfor %}
+</ul>
+<a href="/forum/new-topic/?category={{ category.id }}" style="margin-top:1em;display:inline-block;">Start a new topic</a>
+{% endblock %}
